@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DropNow</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="icons.js"></script>
+</head>
+<body class="liquid-bg transition-colors duration-300 antialiased h-screen w-screen overflow-hidden flex items-center justify-center">
+
+
+    <!-- Mobile Device Simulator -->
+    <div id="app-root" class="w-full h-full sm:w-[480px] sm:h-[960px] bg-white/72 dark:bg-gray-950/72 liquid-page-shell sm:rounded-[3.6rem] sm:shadow-2xl overflow-hidden relative flex flex-col text-base sm:text-lg transition-all duration-300 backdrop-blur-[26px] border border-white/50 dark:border-white/10">
+        
+        <!-- 1. Onboarding View -->
+        <div id="view-onboarding" class="app-view flex-1 flex-col relative h-full bg-white dark:bg-gray-950">
+            <div class="flex-1 overflow-y-auto px-6 pt-16 pb-32 onboarding-scroll">
+                <!-- Step 1 -->
+                <div id="onboarding-step-1" class="flex flex-col items-center text-center space-y-6 h-full justify-center animate-fade-in">
+                    <div class="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-3xl flex items-center justify-center">
+                        <i data-lucide="printer" class="w-12 h-12 text-gray-900 dark:text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-3 tracking-tight" data-i18n="welcomeTitle"></h1>
+                        <p class="text-gray-500 dark:text-gray-400" data-i18n="welcomeSubtitle"></p>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div id="onboarding-step-2" class="hidden flex-col space-y-8 animate-fade-in mt-10">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2" data-i18n="permissionsTitle"></h1>
+                        <p class="text-gray-500 dark:text-gray-400" data-i18n="permissionsSub"></p>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="flex gap-4 items-start">
+                            <div class="p-3 bg-gray-100 dark:bg-gray-800 rounded-2xl"><i data-lucide="bluetooth" class="text-gray-900 dark:text-white"></i></div>
+                            <div><h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="bluetoothTitle"></h3><p class="text-sm text-gray-500 dark:text-gray-400 leading-snug" data-i18n="bluetoothDesc"></p></div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="p-3 bg-gray-100 dark:bg-gray-800 rounded-2xl"><i data-lucide="camera" class="text-gray-900 dark:text-white"></i></div>
+                            <div><h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="cameraTitle"></h3><p class="text-sm text-gray-500 dark:text-gray-400 leading-snug" data-i18n="cameraDesc"></p></div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="p-3 bg-gray-100 dark:bg-gray-800 rounded-2xl"><i data-lucide="image" class="text-gray-900 dark:text-white"></i></div>
+                            <div><h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="photoTitle"></h3><p class="text-sm text-gray-500 dark:text-gray-400 leading-snug" data-i18n="photoDesc"></p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div id="onboarding-step-3" class="hidden flex-col space-y-8 animate-fade-in mt-10">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2" data-i18n="prefsTitle"></h1>
+                        <p class="text-gray-500 dark:text-gray-400" data-i18n="prefsSub"></p>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="p-4 bg-gray-50 dark:bg-gray-900 rounded-2xl flex justify-between items-center mb-2">
+                            <span class="font-medium dark:text-white" data-i18n="language"></span>
+                            <div class="glass-segmented glass-segmented-compact" id="onboard-lang-toggle">
+                                <button type="button" onclick="setLang('en')" id="btn-lang-en" class="glass-segmented-btn">EN</button>
+                                <button type="button" onclick="setLang('zh')" id="btn-lang-zh" class="glass-segmented-btn">中文</button>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-gray-50 dark:bg-gray-900 rounded-2xl flex justify-between items-center gap-3">
+                            <span class="font-medium dark:text-white" data-i18n="theme"></span>
+                            <div class="glass-segmented glass-segmented-compact" id="onboard-theme-toggle">
+                                <button type="button" class="glass-segmented-btn" data-theme-choice="system" onclick="setTheme('system')" data-i18n="system"></button>
+                                <button type="button" class="glass-segmented-btn" data-theme-choice="light" onclick="setTheme('light')" data-i18n="light"></button>
+                                <button type="button" class="glass-segmented-btn" data-theme-choice="dark" onclick="setTheme('dark')" data-i18n="dark"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="absolute bottom-0 w-full p-6 bg-gradient-to-t from-white/80 via-white/64 dark:from-gray-950/80 dark:via-gray-950/62 to-transparent backdrop-blur-[18px]">
+                <button onclick="nextOnboardingStep()" id="onboarding-btn" class="w-full py-4 px-6 rounded-2xl font-semibold btn-primary bg-gray-900 text-white dark:bg-white dark:text-gray-900 active:scale-95 transition-transform" data-i18n="continue"></button>
+            </div>
+        </div>
+
+        <!-- 2. Main Tabs View -->
+        <div id="view-main" class="app-view hidden flex-col h-full bg-gray-50 dark:bg-gray-950 relative">
+            <div class="flex-1 overflow-y-auto pb-32">
+                
+                <!-- Home Tab -->
+                <div id="tab-home" class="tab-content p-6 h-full flex flex-col relative">
+                    <div class="flex items-center justify-between mb-8 lh-reverse">
+                        <div onclick="navigate('bt_connect')" id="bt-status-badge" class="liquid-glass-chip flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer text-gray-700 dark:text-gray-300">
+                            <i data-lucide="bluetooth-off" class="w-4 h-4" id="bt-status-icon"></i>
+                            <span class="text-sm font-semibold" id="bt-status-text" data-i18n="printerDisconnected"></span>
+                        </div>
+                    </div>
+                    <!-- Hero Printer -->
+                    <div class="flex-1 flex flex-col items-center justify-center mb-10">
+                        <div id="hero-printer-container" class="relative w-64 h-64 flex items-center justify-center transition-all duration-700 opacity-40 grayscale scale-95">
+                            <img
+                                id="hero-printer-img"
+                                src="assets/printer_disconnected.png"
+                                alt="DropNow printer"
+                                class="block w-56 h-auto select-none pointer-events-none"
+                            />
+                        </div>
+                        <h2 class="mt-12 text-2xl font-bold text-gray-900 dark:text-white" id="hero-status-text" data-i18n="connectPrinter"></h2>
+                    </div>
+                    <!-- Big Action Button -->
+                    <div class="flex justify-center mb-4">
+                        <button onclick="handleMainAction()" class="w-20 h-20 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full shadow-xl flex items-center justify-center active:scale-90 transition-transform hover:shadow-2xl">
+                            <i data-lucide="plus" class="w-9 h-9"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Works Tab -->
+                <div id="tab-works" class="tab-content hidden p-6 flex flex-col min-h-full">
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-6 mt-4 lh-text-right" data-i18n="works"></h1>
+                    <div id="works-container" class="grid grid-cols-2 gap-4">
+                        <!-- Populated by JS -->
+                    </div>
+                    <div id="works-empty" class="flex flex-col items-center justify-center py-20 text-gray-400">
+                        <i data-lucide="history" class="w-12 h-12 mb-4 opacity-50"></i>
+                        <p data-i18n="historyEmpty"></p>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div id="tab-settings" class="tab-content hidden p-6">
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-6 mt-4 lh-text-right" data-i18n="settings"></h1>
+                    
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 ml-2 mt-6 lh-text-right" data-i18n="prefsTitle"></h3>
+                    <div class="settings-liquid-card rounded-[1.75rem] overflow-hidden">
+                        <div class="settings-row border-b border-gray-50 dark:border-gray-800 lh-reverse">
+                            <div class="flex items-center gap-3 lh-reverse"><i data-lucide="type" class="text-gray-500 w-5 h-5"></i><span class="font-medium text-gray-900 dark:text-white" data-i18n="language"></span></div>
+                            <div class="glass-segmented glass-segmented-compact" id="setting-lang-toggle">
+                                <button type="button" id="setting-btn-lang-en" class="glass-segmented-btn" onclick="setLang('en')">English</button>
+                                <button type="button" id="setting-btn-lang-zh" class="glass-segmented-btn" onclick="setLang('zh')">简体中文</button>
+                            </div>
+                        </div>
+                        <div class="settings-row border-b border-gray-50 dark:border-gray-800 lh-reverse">
+                            <div class="flex items-center gap-3 lh-reverse"><i data-lucide="moon" class="text-gray-500 w-5 h-5"></i><span class="font-medium text-gray-900 dark:text-white" data-i18n="theme"></span></div>
+                            <div class="glass-segmented glass-segmented-compact" id="setting-theme-toggle">
+                                <button type="button" class="glass-segmented-btn" data-theme-choice="system" onclick="setTheme('system')" data-i18n="system"></button>
+                                <button type="button" class="glass-segmented-btn" data-theme-choice="light" onclick="setTheme('light')" data-i18n="light"></button>
+                                <button type="button" class="glass-segmented-btn" data-theme-choice="dark" onclick="setTheme('dark')" data-i18n="dark"></button>
+                            </div>
+                        </div>
+                        <div class="settings-row lh-reverse">
+                            <div class="flex items-center gap-3 lh-reverse"><i data-lucide="hand" class="text-gray-500 w-5 h-5"></i><span class="font-medium text-gray-900 dark:text-white" data-i18n="leftHanded"></span></div>
+                            <div onclick="toggleState('leftHanded')" id="toggle-lh" class="ios-switch w-12 h-7 flex items-center rounded-full p-1 cursor-pointer transition-colors bg-gray-300 dark:bg-gray-700"><div class="bg-white w-5 h-5 rounded-full shadow-md transform transition-transform translate-x-0 toggle-knob"></div></div>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 ml-2 mt-6 lh-text-right" data-i18n="accessibility"></h3>
+                    <div class="settings-liquid-card rounded-[1.75rem] overflow-hidden">
+                        <div class="settings-row border-b border-gray-50 dark:border-gray-800 lh-reverse">
+                            <div class="flex items-center gap-3 lh-reverse"><i data-lucide="type" class="text-gray-500 w-5 h-5"></i><span class="font-medium text-gray-900 dark:text-white" data-i18n="largerText"></span></div>
+                            <div onclick="toggleState('largerText')" id="toggle-text" class="ios-switch w-12 h-7 flex items-center rounded-full p-1 cursor-pointer transition-colors bg-gray-300 dark:bg-gray-700"><div class="bg-white w-5 h-5 rounded-full shadow-md transform transition-transform translate-x-0 toggle-knob"></div></div>
+                        </div>
+                        <div class="settings-row lh-reverse">
+                            <div class="flex items-center gap-3 lh-reverse"><i data-lucide="accessibility" class="text-gray-500 w-5 h-5"></i><span class="font-medium text-gray-900 dark:text-white" data-i18n="highContrast"></span></div>
+                            <div onclick="toggleState('highContrast')" id="toggle-hc" class="ios-switch w-12 h-7 flex items-center rounded-full p-1 cursor-pointer transition-colors bg-gray-300 dark:bg-gray-700"><div class="bg-white w-5 h-5 rounded-full shadow-md transform transition-transform translate-x-0 toggle-knob"></div></div>
+                        </div>
+                    </div>
+                    
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 ml-2 mt-6 lh-text-right" data-i18n="deviceInfo"></h3>
+                    <div class="settings-liquid-card rounded-[1.75rem] overflow-hidden">
+                        <div class="settings-row lh-reverse">
+                            <div class="flex items-center gap-3 lh-reverse"><i data-lucide="printer" class="text-gray-500 w-5 h-5"></i><span class="font-medium text-gray-900 dark:text-white" id="setting-printer-name" data-i18n="printerDisconnected"></span></div>
+                            <span class="text-sm text-gray-400 font-mono">v1.1.4</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Bottom Tab Bar -->
+            <div class="main-tab-dock-wrap">
+                <div class="main-tab-dock lh-reverse" id="main-tab-dock" role="tablist" aria-label="Main navigation">
+                    <div class="main-tab-indicator" id="main-tab-indicator" aria-hidden="true"></div>
+                    <button type="button" class="main-tab-btn" data-tab="home" role="tab" aria-selected="false">
+                        <i data-lucide="printer"></i>
+                        <span class="main-tab-label" data-i18n="home"></span>
+                    </button>
+                    <button type="button" class="main-tab-btn" data-tab="works" role="tab" aria-selected="false">
+                        <i data-lucide="history"></i>
+                        <span class="main-tab-label" data-i18n="works"></span>
+                    </button>
+                    <button type="button" class="main-tab-btn" data-tab="settings" role="tab" aria-selected="false">
+                        <i data-lucide="settings"></i>
+                        <span class="main-tab-label" data-i18n="settings"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Action Sheet Overlay -->
+
+            <div id="action-sheet" class="hidden absolute inset-0 z-50 flex-col justify-end">
+                <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="toggleActionSheet(false)"></div>
+                <div class="liquid-glass-strong rounded-t-3xl p-6 relative z-10 animate-slide-up space-y-4">
+                    <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-center mb-2" data-i18n="chooseLibrary"></h3>
+                    <button onclick="navigate('camera'); toggleActionSheet(false);" class="w-full liquid-glass-button action-sheet-button p-4 rounded-2xl flex items-center gap-4 active:scale-95 transition-transform lh-reverse">
+                        <div class="w-12 h-12 bg-white dark:bg-gray-700 rounded-xl shadow-sm flex items-center justify-center"><i data-lucide="camera" class="text-gray-900 dark:text-white"></i></div>
+                        <span class="font-semibold text-lg text-gray-900 dark:text-white flex-1 text-left lh-text-right" data-i18n="takePhoto"></span>
+                        <i data-lucide="chevron-right" class="text-gray-400 lh-chevron"></i>
+                    </button>
+                    <button onclick="navigate('library'); toggleActionSheet(false);" class="w-full liquid-glass-button action-sheet-button p-4 rounded-2xl flex items-center gap-4 active:scale-95 transition-transform lh-reverse">
+                        <div class="w-12 h-12 bg-white dark:bg-gray-700 rounded-xl shadow-sm flex items-center justify-center"><i data-lucide="image" class="text-gray-900 dark:text-white"></i></div>
+                        <span class="font-semibold text-lg text-gray-900 dark:text-white flex-1 text-left lh-text-right" data-i18n="chooseLibrary"></span>
+                        <i data-lucide="chevron-right" class="text-gray-400 lh-chevron"></i>
+                    </button>
+                    <button onclick="navigate('collage'); toggleActionSheet(false);" class="w-full liquid-glass-button action-sheet-button p-4 rounded-2xl flex items-center gap-4 active:scale-95 transition-transform lh-reverse">
+                        <div class="w-12 h-12 bg-white dark:bg-gray-700 rounded-xl shadow-sm flex items-center justify-center"><i data-lucide="grid" class="text-gray-900 dark:text-white"></i></div>
+                        <span class="font-semibold text-lg text-gray-900 dark:text-white flex-1 text-left lh-text-right" data-i18n="collagePrint"></span>
+                        <i data-lucide="chevron-right" class="text-gray-400 lh-chevron"></i>
+                    </button>
+                    <button onclick="toggleActionSheet(false)" class="w-full py-4 px-6 rounded-2xl font-semibold flex items-center justify-center gap-2 bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white mt-4" data-i18n="cancel"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Bluetooth Connect View -->
+        <div id="view-bt_connect" class="app-view hidden flex-col h-full bg-gray-50 dark:bg-gray-950">
+            <div class="app-top-bar px-4 py-4 flex items-center justify-between z-10 liquid-glass sticky top-0 lh-reverse">
+                <div class="w-10"><button onclick="navigate('main')" class="top-bar-hit p-2 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"><i data-lucide="chevron-left" class="dark:text-white lh-chevron-back"></i></button></div>
+                <h1 class="font-semibold text-gray-900 dark:text-white" data-i18n="connectPrinter"></h1>
+                <div class="w-10"></div>
+            </div>
+            <div class="p-6 flex-1 overflow-y-auto">
+                <div class="flex flex-col items-center justify-center py-10">
+                    <div class="relative">
+                        <div id="bt-scan-pulse" class="w-24 h-24 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center animate-pulse">
+                            <i data-lucide="bluetooth" class="w-10 h-10 text-blue-600 dark:text-blue-400"></i>
+                        </div>
+                        <div id="bt-scan-spinner" class="absolute inset-0 rounded-full border-4 border-blue-400 dark:border-blue-500 border-t-transparent animate-spin"></div>
+                    </div>
+                    <p id="bt-scan-text" class="mt-4 text-gray-500 dark:text-gray-400 font-medium" data-i18n="scanning"></p>
+                </div>
+                <div class="space-y-3" id="printer-list">
+                    <!-- Printers populated by JS -->
+                </div>
+                <div class="mt-12 bg-blue-50 dark:bg-blue-900/20 p-5 rounded-2xl">
+                    <h4 class="font-semibold flex items-center gap-2 text-blue-800 dark:text-blue-300 mb-2"><i data-lucide="alert-circle" class="w-4 h-4"></i><span data-i18n="troubleshooting"></span></h4>
+                    <p class="text-sm text-blue-600 dark:text-blue-400 leading-relaxed" data-i18n="howToConnect"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Camera View -->
+        <div id="view-camera" class="app-view hidden flex-col h-full bg-black relative">
+            <div class="app-top-bar-camera px-4 py-4 flex items-center justify-between z-10 absolute top-0 w-full text-white">
+                <button onclick="navigate('main')" class="camera-top-hit p-2 -ml-2"><i data-lucide="x" class="w-8 h-8"></i></button>
+            </div>
+            <div class="flex-1 bg-black flex items-center justify-center relative overflow-hidden" id="camera-viewport">
+                <video id="camera-video" class="w-full h-full object-cover hidden" autoplay playsinline muted></video>
+                <canvas id="camera-canvas" class="hidden"></canvas>
+                <div id="camera-placeholder" class="absolute inset-0 bg-[#111] flex flex-col items-center justify-center text-center px-8">
+                    <i data-lucide="camera" class="w-12 h-12 text-gray-500 mb-4"></i>
+                    <span class="text-gray-300 font-medium text-sm mb-3" data-i18n="cameraPermissionHint"></span>
+                    <button onclick="startCamera(true)" class="px-4 py-2 rounded-full bg-white text-black text-sm font-semibold" data-i18n="retryCamera"></button>
+                </div>
+                <div id="camera-flash" class="absolute inset-0 bg-white opacity-0 pointer-events-none"></div>
+            </div>
+            <div class="h-32 bg-black flex items-center justify-center pb-safe">
+                <button onclick="capturePhoto()" class="w-16 h-16 rounded-full border-4 border-white bg-gray-300 active:scale-90 transition-transform"></button>
+            </div>
+        </div>
+
+        <!-- 5. Library Picker -->
+        <div id="view-library" class="app-view hidden flex-col h-full bg-white dark:bg-gray-950">
+            <div class="app-top-bar px-4 py-4 flex items-center justify-between z-10 liquid-glass sticky top-0 lh-reverse">
+                <div class="w-10"><button onclick="navigate('main')" class="top-bar-hit p-2 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"><i data-lucide="chevron-left" class="dark:text-white lh-chevron-back"></i></button></div>
+                <h1 class="font-semibold text-gray-900 dark:text-white" data-i18n="libraryTitle"></h1>
+                <div class="w-10"></div>
+            </div>
+            <input id="photo-input" type="file" accept="image/*" multiple class="hidden" onchange="handlePhotoSelection(event)" />
+            <div class="px-4 pt-4">
+                <button onclick="openPhotoPicker()" class="w-full py-3 px-4 rounded-2xl font-semibold btn-primary bg-gray-900 text-white dark:bg-white dark:text-gray-900" data-i18n="chooseLocalPhotos"></button>
+            </div>
+            <div id="library-empty-state" class="px-6 py-10 text-center text-gray-500 dark:text-gray-400">
+                <i data-lucide="images" class="w-10 h-10 mx-auto mb-3 opacity-60"></i>
+                <p data-i18n="noLocalPhotos"></p>
+            </div>
+            <div class="flex-1 overflow-y-auto p-1">
+                <div class="grid grid-cols-3 gap-1" id="library-grid">
+                    <!-- Photos populated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Photo Review -->
+        <div id="view-review" class="app-view hidden flex-col h-full bg-gray-50 dark:bg-gray-950">
+            <div class="app-top-bar px-4 py-4 flex items-center justify-between z-10 liquid-glass sticky top-0 lh-reverse">
+                <div class="w-10"><button onclick="navigate('main')" class="top-bar-hit p-2 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"><i data-lucide="chevron-left" class="dark:text-white lh-chevron-back"></i></button></div>
+                <h1 class="font-semibold text-gray-900 dark:text-white" data-i18n="reviewTitle"></h1>
+                <div class="w-10"></div>
+            </div>
+            <div class="flex-1 p-6 flex flex-col items-center justify-center">
+                <div class="review-photo-shell w-full max-w-sm aspect-[3/4] overflow-hidden p-3 flex flex-col">
+                    <div class="flex-1 bg-white/96 dark:bg-gray-900/86 overflow-hidden rounded-[1.15rem] relative">
+                        <img id="review-img" src="" class="w-full h-full object-cover absolute inset-0" alt="review" />
+                    </div>
+                    <div class="h-12"></div>
+                </div>
+            </div>
+            <div class="p-6 pb-safe review-action-panel rounded-t-[2rem]">
+                <div class="space-y-3">
+                    <button onclick="handleDirectPrint()" class="review-primary-btn w-full py-4 px-6 rounded-[1.35rem] font-semibold flex items-center justify-center" data-i18n="directPrint"></button>
+                    <button onclick="navigate('editor')" class="review-secondary-btn w-full py-4 px-6 rounded-[1.35rem] font-semibold flex items-center justify-center" data-i18n="customizePrint"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. Customize Editor -->
+        <div id="view-editor" class="app-view hidden flex-col h-full bg-transparent">
+            <div class="app-top-bar px-4 py-4 flex items-center justify-between z-10 liquid-glass sticky top-0 lh-reverse">
+                <div class="w-10"><button onclick="handleEditorBack()" class="top-bar-hit p-2 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"><i data-lucide="chevron-left" class="dark:text-white lh-chevron-back"></i></button></div>
+                <h1 class="font-semibold text-gray-900 dark:text-white" data-i18n="editorTitle"></h1>
+                <div class="w-10 flex justify-end"><button onclick="handleEditorPrint()" class="editor-primary-action text-blue-600 dark:text-blue-400 font-semibold" data-i18n="print"></button></div>
+            </div>
+            <div class="flex-1 p-6 flex items-center justify-center overflow-hidden relative">
+                <div id="editor-stage" class="editor-stage-shell rounded-[2rem] px-4 py-5">
+                    <div id="editor-frame" class="transition-all duration-300 p-0 bg-transparent rounded-none">
+                        <div id="editor-crop-surface" class="editor-crop-surface rounded-lg shadow-lg" onpointerdown="startEditorDrag(event)" onpointermove="handleEditorDrag(event)" onpointerup="endEditorDrag(event)" onpointerleave="endEditorDrag(event)" onpointercancel="endEditorDrag(event)">
+                            <img id="editor-img" src="" class="editor-crop-image" alt="edit preview" draggable="false" />
+                        </div>
+                        <div id="editor-frame-footer" class="editor-frame-footer">
+                            <span id="editor-frame-date" class="text-xs font-medium tracking-[0.18em] text-gray-500 uppercase">2026.04.13</span>
+                            <div class="flex items-center gap-2 text-gray-900">
+                                <span class="editor-brand-chip">dn</span>
+                                <span class="text-sm font-semibold tracking-[0.08em] lowercase">DropNow</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pb-safe rounded-t-3xl editor-liquid-panel">
+                <div class="px-6 pt-4">
+                    <p class="editor-hint-text text-sm text-center font-semibold tracking-[0.01em]" data-i18n="dragPhotoHint"></p>
+                </div>
+                <div class="min-h-[110px] px-6 flex items-center justify-center" id="editor-controls">
+                    <!-- Dynamic controls -->
+                </div>
+                
+                <div class="main-tab-dock-wrap editor-tab-dock-wrap">
+                    <div class="main-tab-dock editor-tool-dock lh-reverse" id="editor-tool-dock" role="tablist" aria-label="Editor tools">
+                        <div class="main-tab-indicator editor-tool-indicator" id="editor-tool-indicator" aria-hidden="true"></div>
+                        <button type="button" class="main-tab-btn editor-tool-btn is-active" data-tool="crop" role="tab" aria-selected="true" id="editor-tool-btn-crop">
+                            <i data-lucide="crop" id="tool-icon-crop"></i>
+                            <span id="tool-label-crop" class="main-tab-label editor-tool-label" data-i18n="crop"></span>
+                        </button>
+                        <button type="button" class="main-tab-btn editor-tool-btn" data-tool="frame" role="tab" aria-selected="false" id="editor-tool-btn-frame">
+                            <i data-lucide="frame" id="tool-icon-frame"></i>
+                            <span id="tool-label-frame" class="main-tab-label editor-tool-label" data-i18n="frame"></span>
+                        </button>
+                        <button type="button" class="main-tab-btn editor-tool-btn" data-tool="brightness" role="tab" aria-selected="false" id="editor-tool-btn-brightness">
+                            <i data-lucide="sun" id="tool-icon-brightness"></i>
+                            <span id="tool-label-brightness" class="main-tab-label editor-tool-label" data-i18n="brightness"></span>
+                        </button>
+                        <button type="button" class="main-tab-btn editor-tool-btn" data-tool="contrast" role="tab" aria-selected="false" id="editor-tool-btn-contrast">
+                            <i data-lucide="sliders-horizontal" id="tool-icon-contrast"></i>
+                            <span id="tool-label-contrast" class="main-tab-label editor-tool-label" data-i18n="contrast"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. Collage Editor -->
+        <div id="view-collage" class="app-view hidden flex-col h-full bg-gray-50 dark:bg-gray-950">
+            <div class="app-top-bar px-4 py-4 flex items-center justify-between z-10 liquid-glass sticky top-0 lh-reverse">
+                <div class="w-10"><button onclick="navigate('main')" class="top-bar-hit p-2 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"><i data-lucide="chevron-left" class="dark:text-white lh-chevron-back"></i></button></div>
+                <h1 class="font-semibold text-gray-900 dark:text-white" data-i18n="collageTitle"></h1>
+                <div class="w-10 flex justify-end">
+                    <!-- Changed to printCollage -->
+                    <button onclick="printCollage()" class="top-bar-action text-blue-600 dark:text-blue-400 font-semibold" id="btn-collage-print" data-i18n="print"></button>
+                </div>
+            </div>
+            <div class="flex-1 p-6 flex flex-col items-center justify-center">
+                <div class="w-full max-w-[280px] aspect-[3/4] bg-white dark:bg-gray-800 p-2 shadow-xl rounded-lg grid gap-2 transition-all duration-300" id="collage-grid">
+                    <!-- Photos populated by JS based on layout -->
+                </div>
+            </div>
+            <div class="liquid-glass-strong p-6 pb-safe rounded-t-3xl collage-layout-panel">
+                <h3 class="text-sm font-semibold text-gray-500 mb-4 collage-layout-title" data-i18n="selectLayout"></h3>
+                <div class="flex gap-4 overflow-x-auto pb-2 lh-reverse collage-layout-strip">
+                    <!-- Added layout logic -->
+                    <div onclick="setCollageLayout('2x2')" id="btn-layout-2x2" class="layout-btn w-16 h-16 bg-gray-100 dark:bg-gray-800 border-2 border-transparent rounded-lg grid grid-cols-2 gap-1 p-1 shrink-0 cursor-pointer transition-colors"><div class="bg-gray-300 rounded-[2px]"></div><div class="bg-gray-300 rounded-[2px]"></div><div class="bg-gray-300 rounded-[2px]"></div><div class="bg-gray-300 rounded-[2px]"></div></div>
+                    <div onclick="setCollageLayout('rows-2')" id="btn-layout-rows-2" class="layout-btn w-16 h-16 bg-gray-100 dark:bg-gray-800 border-2 border-transparent rounded-lg flex flex-col gap-1 p-1 shrink-0 cursor-pointer transition-colors"><div class="flex-1 bg-gray-300 rounded-[2px]"></div><div class="flex-1 bg-gray-300 rounded-[2px]"></div></div>
+                    <div onclick="setCollageLayout('cols-2')" id="btn-layout-cols-2" class="layout-btn w-16 h-16 bg-gray-100 dark:bg-gray-800 border-2 border-transparent rounded-lg flex gap-1 p-1 shrink-0 cursor-pointer transition-colors"><div class="flex-1 bg-gray-300 rounded-[2px]"></div><div class="flex-1 bg-gray-300 rounded-[2px]"></div></div>
+                </div>
+                <input id="collage-photo-input" type="file" accept="image/*" class="hidden" onchange="handleCollagePhotoSelection(event)" />
+            </div>
+
+            <div id="collage-slot-sheet" class="hidden absolute inset-0 z-50 flex-col justify-end">
+                <div class="absolute inset-0 collage-slot-sheet-backdrop" onclick="toggleCollageSlotSheet(false)"></div>
+                <div class="collage-slot-sheet-panel rounded-t-3xl p-6 relative z-10 animate-slide-up space-y-4">
+                    <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-center mb-2" data-i18n="choosePhotoForSlot"></h3>
+                    <button onclick="startCollageCameraFlow()" class="collage-sheet-btn lh-reverse active:scale-95 transition-transform">
+                        <div class="collage-sheet-btn-icon"><i data-lucide="camera" class="text-gray-900 dark:text-white"></i></div>
+                        <span class="flex-1 text-left lh-text-right" data-i18n="takePhoto"></span>
+                        <i data-lucide="chevron-right" class="text-gray-400 lh-chevron"></i>
+                    </button>
+                    <button onclick="openCollagePhotoPicker()" class="collage-sheet-btn lh-reverse active:scale-95 transition-transform">
+                        <div class="collage-sheet-btn-icon"><i data-lucide="image" class="text-gray-900 dark:text-white"></i></div>
+                        <span class="flex-1 text-left lh-text-right" data-i18n="chooseLibrary"></span>
+                        <i data-lucide="chevron-right" class="text-gray-400 lh-chevron"></i>
+                    </button>
+                    <button id="collage-existing-btn" onclick="openCollageTakenPhotoSheet()" class="collage-sheet-btn lh-reverse active:scale-95 transition-transform hidden">
+                        <div class="collage-sheet-btn-icon"><i data-lucide="history" class="text-gray-900 dark:text-white"></i></div>
+                        <span class="flex-1 text-left lh-text-right" data-i18n="chooseCapturedPhoto"></span>
+                        <i data-lucide="chevron-right" class="text-gray-400 lh-chevron"></i>
+                    </button>
+                    <button onclick="toggleCollageSlotSheet(false)" class="w-full py-4 px-6 rounded-2xl font-semibold flex items-center justify-center gap-2 bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white mt-4" data-i18n="cancel"></button>
+                </div>
+            </div>
+
+
+            <div id="collage-slot-manage-sheet" class="hidden absolute inset-0 z-50 flex-col justify-end">
+                <div class="absolute inset-0 collage-slot-sheet-backdrop" onclick="toggleCollageSlotManageSheet(false)"></div>
+                <div class="collage-slot-sheet-panel rounded-t-3xl p-6 relative z-10 animate-slide-up space-y-4">
+                    <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-center mb-2" data-i18n="choosePhotoForSlot"></h3>
+                    <button onclick="replaceCollageSlotPhoto()" class="collage-sheet-btn lh-reverse active:scale-95 transition-transform">
+                        <div class="collage-sheet-btn-icon"><i data-lucide="refresh-cw" class="text-gray-900 dark:text-white"></i></div>
+                        <span class="flex-1 text-left lh-text-right" data-i18n="replacePhoto"></span>
+                        <i data-lucide="chevron-right" class="text-gray-400 lh-chevron"></i>
+                    </button>
+                    <button onclick="editCurrentCollageSlotPhoto()" class="collage-sheet-btn lh-reverse active:scale-95 transition-transform">
+                        <div class="collage-sheet-btn-icon"><i data-lucide="sliders-horizontal" class="text-gray-900 dark:text-white"></i></div>
+                        <span class="flex-1 text-left lh-text-right" data-i18n="editCurrentPhoto"></span>
+                        <i data-lucide="chevron-right" class="text-gray-400 lh-chevron"></i>
+                    </button>
+                    <button onclick="removeCurrentCollageSlotPhoto()" class="collage-sheet-btn lh-reverse active:scale-95 transition-transform">
+                        <div class="collage-sheet-btn-icon"><i data-lucide="trash-2" class="text-gray-900 dark:text-white"></i></div>
+                        <span class="flex-1 text-left lh-text-right" data-i18n="removePhoto"></span>
+                        <i data-lucide="chevron-right" class="text-gray-400 lh-chevron"></i>
+                    </button>
+                    <button onclick="toggleCollageSlotManageSheet(false)" class="w-full py-4 px-6 rounded-2xl font-semibold flex items-center justify-center gap-2 bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white mt-4" data-i18n="cancel"></button>
+                </div>
+            </div>
+
+            <div id="collage-taken-sheet" class="hidden absolute inset-0 z-50 flex-col justify-end">
+                <div class="absolute inset-0 collage-slot-sheet-backdrop" onclick="toggleCollageTakenSheet(false)"></div>
+                <div class="collage-slot-sheet-panel rounded-t-3xl p-6 relative z-10 animate-slide-up space-y-4">
+                    <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-center mb-2" data-i18n="chooseCapturedPhoto"></h3>
+                    <div id="collage-taken-grid" class="collage-shot-grid"></div>
+                    <p id="collage-taken-empty" class="hidden text-center text-sm font-semibold text-gray-500 dark:text-gray-400" data-i18n="noTakenPhotos"></p>
+                    <button onclick="toggleCollageTakenSheet(false)" class="w-full py-4 px-6 rounded-2xl font-semibold flex items-center justify-center gap-2 bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white mt-2" data-i18n="cancel"></button>
+                </div>
+            </div>
+
+            <div id="collage-capture-sheet" class="hidden absolute inset-0 z-50 flex-col justify-end">
+                <div class="absolute inset-0 collage-slot-sheet-backdrop" onclick="toggleCollageCaptureSheet(false)"></div>
+                <div class="collage-slot-sheet-panel rounded-t-3xl p-6 relative z-10 animate-slide-up space-y-4">
+                    <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-center mb-2" data-i18n="choosePhotoForSlot"></h3>
+                    <button onclick="useCapturedPhotoDirectly()" class="collage-sheet-btn lh-reverse active:scale-95 transition-transform">
+                        <div class="collage-sheet-btn-icon"><i data-lucide="check" class="text-gray-900 dark:text-white"></i></div>
+                        <span class="flex-1 text-left lh-text-right" data-i18n="useDirectly"></span>
+                        <i data-lucide="chevron-right" class="text-gray-400 lh-chevron"></i>
+                    </button>
+                    <button onclick="editCapturedPhotoForCollage()" class="collage-sheet-btn lh-reverse active:scale-95 transition-transform">
+                        <div class="collage-sheet-btn-icon"><i data-lucide="sliders-horizontal" class="text-gray-900 dark:text-white"></i></div>
+                        <span class="flex-1 text-left lh-text-right" data-i18n="editBeforeUse"></span>
+                        <i data-lucide="chevron-right" class="text-gray-400 lh-chevron"></i>
+                    </button>
+                    <button id="collage-reselect-btn" onclick="reselectPendingCollagePhoto()" class="collage-sheet-btn lh-reverse active:scale-95 transition-transform">
+                        <div class="collage-sheet-btn-icon"><i id="collage-reselect-icon" data-lucide="camera" class="text-gray-900 dark:text-white"></i></div>
+                        <span id="collage-reselect-label" class="flex-1 text-left lh-text-right" data-i18n="retakePhoto"></span>
+                        <i data-lucide="chevron-right" class="text-gray-400 lh-chevron"></i>
+                    </button>
+                    <button onclick="toggleCollageCaptureSheet(false)" class="w-full py-4 px-6 rounded-2xl font-semibold flex items-center justify-center gap-2 bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white mt-2" data-i18n="cancel"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 9. Print Progress -->
+        <div id="view-printing" class="app-view hidden flex-col h-full bg-white dark:bg-gray-950 items-center justify-center p-6 relative">
+            <div id="print-active" class="flex-1 w-full flex flex-col items-center justify-center animate-fade-in">
+                <div class="relative w-48 h-64 mb-10" style="perspective: 1000px;">
+                    <div class="w-full h-full bg-white border border-gray-200 shadow-2xl p-3 flex flex-col transform-gpu animate-print-slide">
+                        <div class="flex-1 bg-gray-100 overflow-hidden relative">
+                            <img id="printing-img" src="" class="w-full h-full object-cover" alt="printing" />
+                            <div class="absolute top-0 left-0 w-full h-1 bg-green-400/50 shadow-[0_0_8px_rgba(74,222,128,0.8)] animate-scan-line"></div>
+                        </div>
+                        <div class="h-10"></div>
+                    </div>
+                </div>
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6" data-i18n="printing"></h2>
+                <div class="w-full max-w-xs bg-gray-100 dark:bg-gray-800 rounded-full h-3 overflow-hidden">
+                    <div id="print-progress-bar" class="bg-gray-900 dark:bg-white h-full transition-all duration-75 ease-linear rounded-full" style="width: 0%"></div>
+                </div>
+                <p id="print-progress-text" class="mt-3 text-sm text-gray-500 font-medium">0%</p>
+            </div>
+            
+            <div id="print-done" class="hidden flex-1 w-full flex-col items-center justify-center animate-fade-in">
+                <div class="w-24 h-24 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-6 animate-scale-in">
+                    <i data-lucide="check-circle-2" class="w-12 h-12 text-green-600 dark:text-green-400"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-8" data-i18n="printSuccess"></h2>
+                <div class="w-full space-y-3">
+                    <button onclick="handlePrintAgain()" class="w-full py-4 px-6 rounded-2xl font-semibold btn-primary bg-gray-900 text-white dark:bg-white dark:text-gray-900" data-i18n="printAgain"></button>
+                    <button onclick="handleCustomizePrint()" class="w-full py-4 px-6 rounded-2xl font-semibold bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white" data-i18n="customizeAfterPrint"></button>
+                    <button onclick="navigate('main')" class="w-full py-4 px-6 rounded-2xl font-semibold bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white" data-i18n="backHome"></button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
