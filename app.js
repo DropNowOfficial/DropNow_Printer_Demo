@@ -14,6 +14,8 @@
             selectedPhoto: null,
             selectedPhotoSource: null,
             editSourcePhoto: null,
+            editorReturnView: 'review',
+            editorReturnTab: null,
             cameraStream: null,
             cameraFacingMode: 'environment',
             cameraCanFlip: false,
@@ -110,6 +112,26 @@
                 return state.editSourcePhoto;
             }
             return state.selectedPhotoSource || state.selectedPhoto;
+        }
+
+        function openEditorForPhoto(sourcePhoto, options = {}) {
+            const editablePhoto = sourcePhoto || getSelectedEditableSource();
+            if (!editablePhoto) return;
+
+            const {
+                returnView = 'review',
+                returnTab = null
+            } = options;
+
+            setSelectedPhoto(editablePhoto, editablePhoto);
+            state.editSourcePhoto = editablePhoto;
+            state.editorReturnView = returnView;
+            state.editorReturnTab = returnTab;
+            navigate('editor');
+        }
+
+        function openSelectedPhotoInEditor() {
+            openEditorForPhoto(getSelectedEditableSource(), { returnView: 'review' });
         }
 
         function syncChoiceUI() {
@@ -1828,10 +1850,26 @@ function handleEditorBack() {
                 state.collageActiveSlot = null;
                 state.pendingCapturedPhoto = null;
                 state.collageSelectionSource = null;
+                state.editSourcePhoto = null;
+                state.editorReturnView = 'review';
+                state.editorReturnTab = null;
                 navigate('collage');
                 return;
             }
-            navigate('review');
+
+            const returnView = state.editorReturnView || 'review';
+            const returnTab = state.editorReturnTab;
+            state.editSourcePhoto = null;
+            state.editorReturnView = 'review';
+            state.editorReturnTab = null;
+
+            if (returnView === 'main') {
+                if (returnTab) state.activeTab = returnTab;
+                navigate('main');
+                return;
+            }
+
+            navigate(returnView);
         }
 
         function getCollageSlotPhoto(index) {
@@ -2320,11 +2358,13 @@ function handleEditorBack() {
 
             state.lastPrintedPhoto = state.selectedPhoto;
             state.lastPrintedSourcePhoto = state.lastPrintedSourcePhoto || getSelectedEditableSource();
+            const sourcePhoto = state.lastPrintedSourcePhoto || state.selectedPhotoSource || state.selectedPhoto;
 
             // Pushing the final image payload (single photo or generated collage)
             state.works.unshift({
                 id: Date.now(),
                 photo: state.selectedPhoto,
+                sourcePhoto,
                 date: new Date().toLocaleDateString()
             });
         }
@@ -2345,12 +2385,18 @@ function handleEditorBack() {
         function handleCustomizePrint() {
             if (state.lastPrintedPhoto || state.selectedPhoto) {
                 const sourcePhoto = state.lastPrintedSourcePhoto || state.selectedPhotoSource || state.selectedPhoto;
-                setSelectedPhoto(sourcePhoto);
-                state.editSourcePhoto = sourcePhoto;
-                navigate('editor');
+                openEditorForPhoto(sourcePhoto, { returnView: 'review' });
                 return;
             }
             navigate('main');
+        }
+
+        function openWorkEditor(workId) {
+            const work = state.works.find(item => String(item.id) === String(workId));
+            if (!work) return;
+
+            const sourcePhoto = work.sourcePhoto || work.photo;
+            openEditorForPhoto(sourcePhoto, { returnView: 'main', returnTab: 'works' });
         }
 
         function renderWorks() {
@@ -2364,12 +2410,17 @@ function handleEditorBack() {
                 empty.classList.add('hidden');
                 container.classList.remove('hidden');
                 container.innerHTML = state.works.map(w => `
-                    <div class="bg-white dark:bg-gray-900 p-2 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
+                    <button
+                        type="button"
+                        data-work-id="${w.id}"
+                        onclick="openWorkEditor(this.dataset.workId)"
+                        class="bg-white dark:bg-gray-900 p-2 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 text-left transition-transform hover:opacity-90 active:scale-95"
+                    >
                         <div class="aspect-[3/4] bg-gray-100 overflow-hidden rounded relative group">
                             <img src="${w.photo}" class="w-full h-full object-cover" loading="lazy" alt="work" />
                         </div>
                         <p class="text-xs text-center mt-2 text-gray-500 font-medium">${w.date}</p>
-                    </div>
+                    </button>
                 `).join('');
             }
         }
