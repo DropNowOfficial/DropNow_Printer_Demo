@@ -1179,6 +1179,19 @@
             width: 1.5rem !important;
             height: 1.5rem !important;
         }
+        .camera-bottom-hit {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 3rem;
+            min-height: 3rem;
+            padding: 0.8rem !important;
+            border-radius: 9999px;
+        }
+        .camera-bottom-hit i {
+            width: 1.5rem !important;
+            height: 1.5rem !important;
+        }
         .main-tab-dock-wrap {
             padding: 0 1rem calc(env(safe-area-inset-bottom, 18px) + 1.2rem) !important;
         }

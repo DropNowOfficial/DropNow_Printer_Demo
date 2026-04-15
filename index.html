@@ -259,18 +259,23 @@
                     <button onclick="startCamera(true)" class="px-4 py-2 rounded-full bg-white text-black text-sm font-semibold" data-i18n="retryCamera"></button>
                 </div>
                 <div id="camera-flash" class="absolute inset-0 bg-white opacity-0 pointer-events-none"></div>
-                <button
-                    id="camera-flip-btn"
-                    type="button"
-                    onclick="flipCamera()"
-                    class="camera-top-hit absolute bottom-10 right-6 z-10 p-2 rounded-full bg-black/35 backdrop-blur-sm hidden"
-                    aria-label="Flip camera"
-                >
-                    <i data-lucide="refresh-cw" class="w-6 h-6"></i>
-                </button>
             </div>
-            <div class="h-32 bg-black flex items-center justify-center pb-safe">
-                <button onclick="capturePhoto()" class="w-16 h-16 rounded-full border-4 border-white bg-gray-300 active:scale-90 transition-transform"></button>
+            <div class="h-32 bg-black flex items-center px-6 pb-safe">
+                <div class="w-16"></div>
+                <div class="flex-1 flex justify-center">
+                    <button onclick="capturePhoto()" class="w-16 h-16 rounded-full border-4 border-white bg-gray-300 active:scale-90 transition-transform"></button>
+                </div>
+                <div class="w-16 flex justify-end">
+                    <button
+                        id="camera-flip-btn"
+                        type="button"
+                        onclick="flipCamera()"
+                        class="camera-bottom-hit p-2 rounded-full bg-gray-800 text-white hidden"
+                        aria-label="Flip camera"
+                    >
+                        <i data-lucide="refresh-cw" class="w-6 h-6"></i>
+                    </button>
+                </div>
             </div>
         </div>
 

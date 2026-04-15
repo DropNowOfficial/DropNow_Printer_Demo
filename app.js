@@ -498,6 +498,56 @@
             flipBtn.classList.toggle('hidden', !state.cameraCanFlip);
         }
 
+        function labelMatchesFacingMode(label, desiredFacingMode) {
+            const normalizedLabel = String(label || '').toLowerCase();
+            if (!normalizedLabel) return false;
+
+            const environmentKeywords = ['back', 'rear', 'environment', 'world', 'traseira', 'tras'];
+            const userKeywords = ['front', 'user', 'facetime', 'selfie'];
+            const keywords = desiredFacingMode === 'environment' ? environmentKeywords : userKeywords;
+
+            return keywords.some(keyword => normalizedLabel.includes(keyword));
+        }
+
+        function getCameraStreamDeviceId(stream) {
+            const [track] = stream?.getVideoTracks?.() || [];
+            return track?.getSettings?.().deviceId || '';
+        }
+
+        function streamMatchesFacingMode(stream, desiredFacingMode) {
+            const [track] = stream?.getVideoTracks?.() || [];
+            if (!track) return false;
+
+            const settingsFacingMode = String(track.getSettings?.().facingMode || '').toLowerCase();
+            if (settingsFacingMode) {
+                return settingsFacingMode === desiredFacingMode;
+            }
+
+            return labelMatchesFacingMode(track.label, desiredFacingMode);
+        }
+
+        function getPreferredCameraDevice(desiredFacingMode) {
+            const devices = state.cameraDevices || [];
+            if (!devices.length) return null;
+
+            if (desiredFacingMode === 'environment') {
+                for (let index = devices.length - 1; index >= 0; index -= 1) {
+                    if (labelMatchesFacingMode(devices[index].label, 'environment')) {
+                        return devices[index];
+                    }
+                }
+                return devices[devices.length - 1];
+            }
+
+            for (const device of devices) {
+                if (labelMatchesFacingMode(device.label, 'user')) {
+                    return device;
+                }
+            }
+
+            return devices[0];
+        }
+
         async function detectCameraDevices() {
             if (!navigator.mediaDevices?.enumerateDevices) {
                 state.cameraDevices = [];
@@ -509,11 +559,8 @@
             try {
                 const devices = await navigator.mediaDevices.enumerateDevices();
                 const videoInputs = devices.filter(device => device.kind === 'videoinput');
-                const supportsFacingMode = Boolean(
-                    navigator.mediaDevices?.getSupportedConstraints?.().facingMode
-                );
                 state.cameraDevices = videoInputs;
-                state.cameraCanFlip = supportsFacingMode && videoInputs.length > 1;
+                state.cameraCanFlip = videoInputs.length > 1;
             } catch (error) {
                 console.error('Camera device detection failed:', error);
                 state.cameraDevices = [];
@@ -557,6 +604,7 @@
             const supportsFacingMode = Boolean(supportedConstraints.facingMode);
             const desiredFacingMode = state.cameraFacingMode || 'environment';
             const constraintsList = [];
+            const preferredDevice = getPreferredCameraDevice(desiredFacingMode);
 
             if (supportsFacingMode) {
                 constraintsList.push({
@@ -572,6 +620,17 @@
                         width: { ideal: 1280 },
                         height: { ideal: 720 },
                         facingMode: { ideal: desiredFacingMode }
+                    },
+                    audio: false
+                });
+            }
+
+            if (preferredDevice?.deviceId) {
+                constraintsList.push({
+                    video: {
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        deviceId: { exact: preferredDevice.deviceId }
                     },
                     audio: false
                 });
@@ -604,6 +663,28 @@
 
                 if (!stream) {
                     throw lastError || new Error('Unable to acquire camera stream.');
+                }
+
+                await detectCameraDevices();
+
+                const preferredDeviceAfterPermission = getPreferredCameraDevice(desiredFacingMode);
+                const activeDeviceId = getCameraStreamDeviceId(stream);
+                const shouldRetryWithPreferredDevice =
+                    state.cameraDevices.length > 1 &&
+                    preferredDeviceAfterPermission?.deviceId &&
+                    preferredDeviceAfterPermission.deviceId !== activeDeviceId &&
+                    !streamMatchesFacingMode(stream, desiredFacingMode);
+
+                if (shouldRetryWithPreferredDevice) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 },
+                            deviceId: { exact: preferredDeviceAfterPermission.deviceId }
+                        },
+                        audio: false
+                    });
                 }
 
                 state.cameraStream = stream;
