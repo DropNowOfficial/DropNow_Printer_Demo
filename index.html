@@ -245,19 +245,9 @@
 
         <!-- 4. Camera View -->
         <div id="view-camera" class="app-view hidden flex-col h-full bg-black relative">
-            <div class="app-top-bar-camera px-4 py-4 flex items-center justify-between z-10 absolute top-0 w-full text-white">
+            <div class="app-top-bar-camera px-4 py-4 flex items-center justify-start z-10 absolute top-0 w-full text-white">
                 <button onclick="navigate('main')" class="camera-top-hit p-2 -ml-2">
                     <i data-lucide="x" class="w-8 h-8"></i>
-                </button>
-
-                <button
-                    id="camera-flip-btn"
-                    type="button"
-                    onclick="flipCamera()"
-                    class="camera-top-hit p-2 rounded-full bg-black/35 backdrop-blur-sm hidden"
-                    aria-label="Flip camera"
-                >
-                    <i data-lucide="refresh-cw" class="w-6 h-6"></i>
                 </button>
             </div>
             <div class="flex-1 bg-black flex items-center justify-center relative overflow-hidden" id="camera-viewport">
@@ -269,6 +259,15 @@
                     <button onclick="startCamera(true)" class="px-4 py-2 rounded-full bg-white text-black text-sm font-semibold" data-i18n="retryCamera"></button>
                 </div>
                 <div id="camera-flash" class="absolute inset-0 bg-white opacity-0 pointer-events-none"></div>
+                <button
+                    id="camera-flip-btn"
+                    type="button"
+                    onclick="flipCamera()"
+                    class="camera-top-hit absolute bottom-10 right-6 z-10 p-2 rounded-full bg-black/35 backdrop-blur-sm hidden"
+                    aria-label="Flip camera"
+                >
+                    <i data-lucide="refresh-cw" class="w-6 h-6"></i>
+                </button>
             </div>
             <div class="h-32 bg-black flex items-center justify-center pb-safe">
                 <button onclick="capturePhoto()" class="w-16 h-16 rounded-full border-4 border-white bg-gray-300 active:scale-90 transition-transform"></button>

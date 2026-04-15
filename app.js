@@ -14,7 +14,7 @@
             selectedPhoto: null,
             editSourcePhoto: null,
             cameraStream: null,
-            cameraFacingMode: 'user',
+            cameraFacingMode: 'environment',
             cameraCanFlip: false,
             cameraDevices: [],
             userPhotos: [],
@@ -555,7 +555,7 @@
 
             const supportedConstraints = navigator.mediaDevices?.getSupportedConstraints?.() || {};
             const supportsFacingMode = Boolean(supportedConstraints.facingMode);
-            const desiredFacingMode = state.cameraFacingMode || 'user';
+            const desiredFacingMode = state.cameraFacingMode || 'environment';
             const constraintsList = [];
 
             if (supportsFacingMode) {
