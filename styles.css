@@ -1447,3 +1447,345 @@ i[data-lucide] > svg[data-lucide-icon]{
         inset 0 1px 0 rgba(255,255,255,0.96),
         0 0 0 1px rgba(15,23,42,0.06) !important;
 }
+
+/* Dark mode refresh: Apple Music-inspired, higher-contrast graphite glass */
+.dark {
+    --glass-soft-top: rgba(58, 66, 80, 0.68);
+    --glass-soft-bottom: rgba(18, 22, 31, 0.78);
+    --glass-regular-top: rgba(72, 80, 96, 0.78);
+    --glass-regular-bottom: rgba(20, 24, 33, 0.88);
+    --glass-strong-top: rgba(92, 101, 118, 0.74);
+    --glass-strong-bottom: rgba(26, 31, 41, 0.94);
+    --glass-border: rgba(255, 255, 255, 0.14);
+    --glass-highlight: rgba(255, 255, 255, 0.20);
+    --glass-highlight-soft: rgba(255, 255, 255, 0.08);
+    --glass-shadow:
+        0 26px 58px rgba(0, 0, 0, 0.42),
+        0 12px 26px rgba(0, 0, 0, 0.28);
+    --glass-shadow-soft:
+        0 18px 36px rgba(0, 0, 0, 0.34),
+        0 8px 18px rgba(0, 0, 0, 0.22);
+    --glass-inner-highlight:
+        inset 0 1px 0 rgba(255, 255, 255, 0.14),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.03);
+    --glass-muted: rgba(168, 179, 198, 0.84);
+    --am-dark-bg: #05070c;
+    --am-dark-bg-soft: #0a0f18;
+    --am-dark-surface: #111722;
+    --am-dark-surface-2: #1a2230;
+    --am-dark-surface-3: #242d3d;
+    --am-dark-text: #f5f7fb;
+    --am-dark-text-secondary: #c7d0de;
+    --am-dark-text-tertiary: #96a3b8;
+    --am-dark-accent: #a8c3ff;
+    --am-dark-accent-soft: rgba(168, 195, 255, 0.18);
+}
+
+.dark body {
+    background:
+        radial-gradient(88rem 42rem at 50% -8%, rgba(118, 142, 196, 0.16), rgba(118, 142, 196, 0) 54%),
+        radial-gradient(42rem 26rem at 50% 100%, rgba(92, 112, 160, 0.10), rgba(92, 112, 160, 0) 66%),
+        linear-gradient(180deg, #060a11 0%, #080c13 42%, #05070c 100%) !important;
+    color: var(--am-dark-text);
+}
+
+.dark .liquid-bg {
+    background:
+        radial-gradient(72rem 34rem at 50% -10%, rgba(122, 145, 198, 0.15), rgba(122, 145, 198, 0) 55%),
+        radial-gradient(34rem 18rem at 50% 100%, rgba(112, 126, 168, 0.10), rgba(112, 126, 168, 0) 68%),
+        linear-gradient(180deg, #07101b 0%, #090d15 40%, #06080d 100%) !important;
+}
+
+.dark #app-root.liquid-page-shell,
+.dark .liquid-page-shell {
+    background:
+        linear-gradient(180deg, rgba(20, 24, 33, 0.88), rgba(8, 10, 15, 0.96)) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    box-shadow:
+        0 32px 82px rgba(0, 0, 0, 0.52),
+        0 12px 28px rgba(0, 0, 0, 0.30),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.03) !important;
+}
+
+.dark .app-view:not(#view-camera) {
+    background:
+        radial-gradient(42rem 20rem at 50% 0%, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0) 54%),
+        linear-gradient(180deg, #0b1018 0%, #080b12 38%, #05070c 100%) !important;
+}
+
+.dark .liquid-glass,
+.dark .liquid-glass-soft,
+.dark .liquid-glass-strong,
+.dark .liquid-glass-chip,
+.dark .liquid-editor-card,
+.dark .liquid-glass-button,
+.dark .settings-liquid-card,
+.dark .review-photo-shell,
+.dark .editor-stage-shell,
+.dark .collage-slot-sheet-panel,
+.dark .collage-shot-thumb {
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    box-shadow:
+        0 20px 42px rgba(0, 0, 0, 0.36),
+        0 8px 18px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
+}
+
+.dark .liquid-glass,
+.dark .app-top-bar.liquid-glass {
+    background:
+        linear-gradient(180deg, rgba(96, 105, 122, 0.70) 0%, rgba(44, 50, 62, 0.84) 42%, rgba(25, 29, 38, 0.94) 100%) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(160%) brightness(0.98) !important;
+    backdrop-filter: blur(28px) saturate(160%) brightness(0.98) !important;
+}
+
+.dark .liquid-glass-soft {
+    background:
+        linear-gradient(180deg, rgba(70, 79, 95, 0.58), rgba(20, 24, 33, 0.82)) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(150%) brightness(0.98) !important;
+    backdrop-filter: blur(24px) saturate(150%) brightness(0.98) !important;
+}
+
+.dark .liquid-glass-strong,
+.dark .settings-liquid-card,
+.dark .review-action-panel,
+.dark #view-editor .editor-liquid-panel,
+.dark #action-sheet .liquid-glass-strong,
+.dark .collage-slot-sheet-panel {
+    background:
+        linear-gradient(180deg, rgba(80, 89, 106, 0.44), rgba(20, 24, 33, 0.94) 24%, rgba(16, 19, 26, 0.98) 100%) !important;
+    -webkit-backdrop-filter: blur(30px) saturate(155%) brightness(0.98) !important;
+    backdrop-filter: blur(30px) saturate(155%) brightness(0.98) !important;
+}
+
+.dark .liquid-glass-chip,
+.dark .glass-segmented,
+.dark #view-editor .editor-segmented-btn,
+.dark #view-editor .editor-reset-chip,
+.dark .collage-sheet-btn,
+.dark .collage-slot-manage-btn,
+.dark .collage-sheet-btn-icon {
+    background:
+        linear-gradient(180deg, rgba(72, 82, 100, 0.56), rgba(23, 28, 38, 0.88)) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    color: var(--am-dark-text) !important;
+    box-shadow:
+        0 12px 24px rgba(0, 0, 0, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
+}
+
+.dark .glass-segmented-btn,
+.dark .main-tab-btn,
+.dark #view-editor .editor-crop-meta,
+.dark #view-editor .editor-hint-text,
+.dark #tab-settings h3.text-xs,
+.dark #tab-settings .font-mono,
+.dark #view-collage .collage-layout-title,
+.dark .settings-row .text-gray-500,
+.dark .settings-row .text-gray-400,
+.dark #view-editor .text-gray-500,
+.dark #view-editor .text-gray-400,
+.dark #view-collage .text-gray-500,
+.dark #view-review .text-gray-500,
+.dark #view-main #tab-home .text-gray-500,
+.dark #view-main #tab-works .text-gray-500 {
+    color: var(--am-dark-text-tertiary) !important;
+}
+
+.dark .glass-segmented-btn.is-active,
+.dark #view-editor .editor-segmented-btn.is-active {
+    color: #07111f !important;
+    background:
+        linear-gradient(180deg, rgba(247, 250, 255, 0.96), rgba(214, 225, 244, 0.88)) !important;
+    border-color: rgba(255, 255, 255, 0.32) !important;
+    box-shadow:
+        0 10px 22px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.78) !important;
+}
+
+.dark .main-tab-dock,
+.dark #view-editor #editor-tool-dock.main-tab-dock {
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    background:
+        linear-gradient(180deg, rgba(74, 84, 102, 0.58), rgba(20, 24, 33, 0.82)) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(150%) brightness(0.98) !important;
+    backdrop-filter: blur(28px) saturate(150%) brightness(0.98) !important;
+    box-shadow:
+        0 24px 54px rgba(0, 0, 0, 0.38),
+        0 10px 24px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.03) !important;
+}
+
+.dark .main-tab-dock::before {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.04) 44%, rgba(255, 255, 255, 0.01) 100%) !important,
+        radial-gradient(120% 115% at 50% 0%, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0) 58%) !important;
+}
+
+.dark .main-tab-dock::after {
+    border-top-color: rgba(255, 255, 255, 0.18) !important;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0) 44%) !important;
+}
+
+.dark .main-tab-indicator {
+    background:
+        linear-gradient(180deg, rgba(146, 157, 177, 0.38), rgba(63, 72, 89, 0.42)) !important;
+    border-color: rgba(255, 255, 255, 0.16) !important;
+    box-shadow:
+        0 18px 38px rgba(0, 0, 0, 0.34),
+        inset 0 1px 0 rgba(255, 255, 255, 0.16),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.03) !important;
+}
+
+.dark .main-tab-indicator::before {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.20), rgba(255, 255, 255, 0.04) 48%, rgba(255, 255, 255, 0.02) 100%) !important,
+        radial-gradient(76% 90% at 50% 0%, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0) 62%) !important;
+}
+
+.dark .main-tab-btn {
+    color: var(--am-dark-text-tertiary) !important;
+    opacity: 0.92 !important;
+}
+
+.dark .main-tab-btn.is-active,
+.dark .main-tab-btn.is-previewed {
+    color: var(--am-dark-text) !important;
+    opacity: 1 !important;
+    text-shadow: 0 0 14px rgba(168, 195, 255, 0.14);
+}
+
+.dark .main-tab-btn:not(.is-active):not(.is-previewed):hover {
+    color: var(--am-dark-text-secondary) !important;
+}
+
+.dark .review-primary-btn,
+.dark #view-editor #editor-controls > div > button.bg-gray-900,
+.dark #view-editor #editor-controls > div > button.dark\:bg-white,
+.dark #view-editor #editor-controls > div > button[class*="bg-gray-900 text-white"],
+.dark #view-editor #editor-controls > div > button[class*="dark:bg-white dark:text-gray-900"] {
+    color: #08111d !important;
+    background:
+        linear-gradient(180deg, rgba(235, 241, 255, 0.98), rgba(173, 196, 242, 0.92)) !important;
+    border-color: rgba(255, 255, 255, 0.34) !important;
+    box-shadow:
+        0 16px 30px rgba(0, 0, 0, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.82) !important;
+}
+
+.dark .review-secondary-btn,
+.dark #view-editor #editor-controls > div > button,
+.dark #view-editor #editor-controls > button {
+    color: var(--am-dark-text) !important;
+    background:
+        linear-gradient(180deg, rgba(64, 74, 92, 0.62), rgba(20, 25, 34, 0.88)) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    box-shadow:
+        0 12px 24px rgba(0, 0, 0, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
+}
+
+.dark #view-editor .editor-slider {
+    accent-color: var(--am-dark-accent) !important;
+}
+
+.dark #view-editor .editor-reset-chip,
+.dark #view-editor #editor-controls > div > button:not(.is-active):not(.bg-gray-900) {
+    color: var(--am-dark-text-secondary) !important;
+}
+
+.dark #view-editor .editor-stage-shell {
+    background:
+        linear-gradient(180deg, rgba(31, 39, 52, 0.96), rgba(13, 16, 22, 0.98)) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.dark #view-editor #editor-crop-surface {
+    background:
+        linear-gradient(180deg, rgba(24, 30, 41, 0.98), rgba(15, 20, 29, 0.98)) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    box-shadow:
+        0 14px 30px rgba(0, 0, 0, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark #view-review .review-photo-shell,
+.dark #view-printing #print-active > div > div {
+    background:
+        linear-gradient(180deg, rgba(31, 39, 52, 0.92), rgba(14, 18, 25, 0.98)) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.dark #action-sheet > .absolute.inset-0,
+.dark .collage-slot-sheet-backdrop {
+    background: rgba(2, 4, 8, 0.52) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    backdrop-filter: blur(8px) !important;
+}
+
+.dark #action-sheet h3,
+.dark .collage-slot-sheet-panel h3 {
+    color: var(--am-dark-text-secondary) !important;
+}
+
+.dark #action-sheet .action-sheet-button span,
+.dark .collage-sheet-btn,
+.dark .collage-slot-manage-btn,
+.dark #view-editor .editor-reset-chip,
+.dark #view-editor .editor-segmented-btn,
+.dark #view-main #bt-status-text,
+.dark #view-main h2,
+.dark h1,
+.dark h2,
+.dark h3 {
+    color: var(--am-dark-text) !important;
+}
+
+.dark #action-sheet .action-sheet-button > div,
+.dark .collage-sheet-btn-icon {
+    background:
+        linear-gradient(180deg, rgba(86, 95, 114, 0.58), rgba(22, 27, 37, 0.88)) !important;
+    border-color: rgba(255, 255, 255, 0.10) !important;
+}
+
+.dark #action-sheet button[data-i18n="cancel"] {
+    background:
+        linear-gradient(180deg, rgba(62, 72, 90, 0.62), rgba(20, 24, 33, 0.90)) !important;
+    color: var(--am-dark-text) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.dark .settings-liquid-card,
+.dark .collage-slot,
+.dark .collage-shot-thumb,
+.dark #view-collage .layout-btn,
+.dark .ios-switch {
+    background:
+        linear-gradient(180deg, rgba(52, 60, 74, 0.58), rgba(18, 22, 31, 0.92)) !important;
+    border-color: rgba(255, 255, 255, 0.10) !important;
+}
+
+.dark .collage-slot-empty,
+.dark #view-collage .layout-btn > div {
+    background:
+        linear-gradient(180deg, rgba(89, 98, 116, 0.24), rgba(24, 29, 39, 0.90)) !important;
+}
+
+.dark .collage-slot-plus,
+.dark .action-sheet-button i[data-lucide="chevron-right"],
+.dark .collage-sheet-btn i[data-lucide="chevron-right"] {
+    color: var(--am-dark-text-tertiary) !important;
+}
+
+.dark .main-tab-dock.is-dragging,
+.dark .main-tab-indicator.is-dragging,
+.dark .review-primary-btn:hover,
+.dark .review-secondary-btn:hover,
+.dark .liquid-glass-button:hover {
+    box-shadow:
+        0 26px 52px rgba(0, 0, 0, 0.40),
+        0 12px 24px rgba(0, 0, 0, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+}
