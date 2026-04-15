@@ -12,6 +12,7 @@
             currentView: 'onboarding',
             activeTab: 'home',
             selectedPhoto: null,
+            selectedPhotoSource: null,
             editSourcePhoto: null,
             cameraStream: null,
             cameraFacingMode: 'environment',
@@ -19,6 +20,7 @@
             cameraDevices: [],
             userPhotos: [],
             lastPrintedPhoto: null,
+            lastPrintedSourcePhoto: null,
             lastPrintedFilename: null,
             collageActiveSlot: null,
             collageEditSlot: null,
@@ -96,6 +98,18 @@
             if (!isChecked) el.classList.add('bg-gray-300');
             const knob = el.querySelector('.toggle-knob');
             if (knob) knob.classList.toggle('translate-x-5', isChecked);
+        }
+
+        function setSelectedPhoto(photoUrl, sourceUrl = photoUrl) {
+            state.selectedPhoto = photoUrl;
+            state.selectedPhotoSource = sourceUrl || photoUrl;
+        }
+
+        function getSelectedEditableSource() {
+            if (state.currentView === 'editor' && state.editSourcePhoto) {
+                return state.editSourcePhoto;
+            }
+            return state.selectedPhotoSource || state.selectedPhoto;
         }
 
         function syncChoiceUI() {
@@ -755,7 +769,7 @@
             const ctx = canvas.getContext('2d');
             ctx.drawImage(video, 0, 0, width, height);
 
-            state.selectedPhoto = canvas.toDataURL('image/jpeg', 0.92);
+            setSelectedPhoto(canvas.toDataURL('image/jpeg', 0.92));
             state.userPhotos.unshift({
                 id: `camera-${Date.now()}`,
                 name: 'camera-capture.jpg',
@@ -828,7 +842,7 @@
         }
 
         function selectPhoto(url) {
-            state.selectedPhoto = url;
+            setSelectedPhoto(url);
             navigate('review');
         }
 
@@ -1007,7 +1021,7 @@
         }
 
         function initEditor() {
-            state.editSourcePhoto = state.selectedPhoto;
+            state.editSourcePhoto = getSelectedEditableSource();
             state.editSettings = { brightness: 100, contrast: 100, frame: 'classic', zoom: 1, offsetX: 0, offsetY: 0 };
             state.editorActiveTool = 'crop';
             state.editorImageMeta = { naturalWidth: 0, naturalHeight: 0 };
@@ -1265,6 +1279,81 @@ function setEditorTool(tool) {
             ctx.closePath();
         }
 
+        function parsePixelValue(value) {
+            return Number.parseFloat(String(value || '0')) || 0;
+        }
+
+        function buildCanvasFont(style, scale = 1) {
+            const fontSize = Math.max(1, parsePixelValue(style.fontSize) * scale);
+            const fontWeight = style.fontWeight || '400';
+            const fontFamily = style.fontFamily || 'sans-serif';
+            return `${fontWeight} ${fontSize}px ${fontFamily}`;
+        }
+
+        function getEditorExportLayout() {
+            const frame = document.getElementById('editor-frame');
+            const surface = document.getElementById('editor-crop-surface');
+            const footer = document.getElementById('editor-frame-footer');
+            const dateEl = document.getElementById('editor-frame-date');
+            const chipEl = footer?.querySelector('.editor-brand-chip');
+            const brandTextEl = footer?.querySelector('div:last-child span:last-child');
+
+            const frameRect = frame?.getBoundingClientRect() || { left: 0, top: 0, width: 320, height: 426 };
+            const surfaceRect = surface?.getBoundingClientRect() || { left: 16, top: 16, width: 288, height: 384 };
+            const footerRect = footer?.getBoundingClientRect() || { left: 16, top: 412, width: 288, height: 44 };
+            const dateRect = dateEl?.getBoundingClientRect() || { left: footerRect.left, top: footerRect.top, width: 80, height: footerRect.height };
+            const chipRect = chipEl?.getBoundingClientRect() || { left: footerRect.left + footerRect.width - 120, top: footerRect.top, width: 32, height: 32 };
+            const brandRect = brandTextEl?.getBoundingClientRect() || { left: chipRect.left + chipRect.width + 8, top: footerRect.top, width: 80, height: footerRect.height };
+
+            const frameStyle = window.getComputedStyle(frame);
+            const surfaceStyle = window.getComputedStyle(surface);
+            const footerDateStyle = dateEl ? window.getComputedStyle(dateEl) : { color: '#6b7280', fontSize: '12px', fontWeight: '500', fontFamily: 'sans-serif' };
+            const chipStyle = chipEl ? window.getComputedStyle(chipEl) : { backgroundColor: '#111827', color: '#ffffff', fontSize: '12px', fontWeight: '700', fontFamily: 'sans-serif' };
+            const brandTextStyle = brandTextEl ? window.getComputedStyle(brandTextEl) : { color: '#111827', fontSize: '14px', fontWeight: '600', fontFamily: 'sans-serif' };
+
+            const canvasWidth = 900;
+            const scale = canvasWidth / Math.max(frameRect.width || 1, 1);
+            const canvasHeight = Math.round(Math.max(frameRect.height || 1, 1) * scale);
+            const footerVisible = footer?.classList.contains('is-visible') || false;
+
+            return {
+                canvasWidth,
+                canvasHeight,
+                frameBackground: frameStyle.backgroundColor || '#ffffff',
+                frameBorderColor: frameStyle.borderTopColor || 'rgba(229,231,235,1)',
+                frameBorderWidth: parsePixelValue(frameStyle.borderTopWidth) * scale,
+                frameRadius: parsePixelValue(frameStyle.borderTopLeftRadius) * scale,
+                frameBorderInset: (parsePixelValue(frameStyle.borderTopWidth) * scale) / 2,
+                innerX: (surfaceRect.left - frameRect.left) * scale,
+                innerY: (surfaceRect.top - frameRect.top) * scale,
+                innerW: surfaceRect.width * scale,
+                innerH: surfaceRect.height * scale,
+                surfaceRadius: parsePixelValue(surfaceStyle.borderTopLeftRadius) * scale,
+                footerVisible,
+                footerDateText: dateEl?.innerText || getTodayStamp(),
+                footerDateColor: footerDateStyle.color || '#6b7280',
+                footerDateFont: buildCanvasFont(footerDateStyle, scale),
+                footerDateX: (dateRect.left - frameRect.left) * scale,
+                footerDateBaselineY: (dateRect.bottom - frameRect.top) * scale,
+                footerChipBackground: chipStyle.backgroundColor || '#111827',
+                footerChipColor: chipStyle.color || '#ffffff',
+                footerChipFont: buildCanvasFont(chipStyle, scale),
+                footerChipText: chipEl?.innerText || 'dn',
+                footerChipX: (chipRect.left - frameRect.left) * scale,
+                footerChipY: (chipRect.top - frameRect.top) * scale,
+                footerChipW: chipRect.width * scale,
+                footerChipH: chipRect.height * scale,
+                footerChipRadius: parsePixelValue(chipStyle.borderTopLeftRadius) * scale,
+                footerChipCenterX: (chipRect.left - frameRect.left + chipRect.width / 2) * scale,
+                footerChipCenterY: (chipRect.top - frameRect.top + chipRect.height / 2) * scale,
+                footerBrandColor: brandTextStyle.color || '#111827',
+                footerBrandFont: buildCanvasFont(brandTextStyle, scale),
+                footerBrandText: brandTextEl?.innerText || 'DropNow',
+                footerBrandX: (brandRect.left - frameRect.left) * scale,
+                footerBrandBaselineY: (brandRect.bottom - frameRect.top) * scale
+            };
+        }
+
         function createDownloadFilename(prefix = 'dropnow-polaroid', ext = 'jpg') {
             const now = new Date();
             const yyyy = now.getFullYear();
@@ -1351,21 +1440,24 @@ function setEditorTool(tool) {
             return canvas.toDataURL('image/jpeg', 0.94);
         }
 
-        async function preparePrintableAsset(kind = 'direct') {
+        async function preparePrintableAsset(kind = 'direct', source = getSelectedEditableSource()) {
             if (kind === 'editor') {
                 return exportEditedPhoto();
             }
             if (kind === 'collage') {
-                return exportClassicPolaroidPhoto(state.selectedPhoto);
+                return exportClassicPolaroidPhoto(source);
             }
-            return exportClassicPolaroidPhoto(state.selectedPhoto);
+            return exportClassicPolaroidPhoto(source);
         }
 
         async function handleDirectPrint() {
             const button = document.querySelector('#view-review [data-i18n="directPrint"]');
             if (button) button.disabled = true;
             try {
-                state.selectedPhoto = await preparePrintableAsset('direct');
+                const sourcePhoto = getSelectedEditableSource();
+                state.lastPrintedSourcePhoto = sourcePhoto;
+                state.selectedPhoto = await preparePrintableAsset('direct', sourcePhoto);
+                state.selectedPhotoSource = sourcePhoto;
                 const filename = createDownloadFilename();
                 state.lastPrintedFilename = downloadPrintableDataUrl(state.selectedPhoto, filename);
                 navigate('printing');
@@ -1375,33 +1467,32 @@ function setEditorTool(tool) {
         }
 
 async function exportEditedPhoto() {
-            const source = state.editSourcePhoto || state.selectedPhoto;
+            const source = getSelectedEditableSource();
             const img = await loadImage(source);
+            const layout = getEditorExportLayout();
             const canvas = document.createElement('canvas');
-            canvas.width = 600;
-            canvas.height = 800;
+            canvas.width = layout.canvasWidth;
+            canvas.height = layout.canvasHeight;
             const ctx = canvas.getContext('2d');
 
-            let innerX = 42;
-            let innerY = 42;
-            let innerW = canvas.width - 84;
-            let innerH = canvas.height - 168;
-
-            ctx.fillStyle = '#ffffff';
+            ctx.fillStyle = layout.frameBackground;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            if (state.editSettings.frame === 'brand') {
-                innerX = 36;
-                innerY = 36;
-                innerW = canvas.width - 72;
-                innerH = canvas.height - 180;
-            } else if (state.editSettings.frame === 'thin') {
-                innerX = 18;
-                innerY = 18;
-                innerW = canvas.width - 36;
-                innerH = canvas.height - 36;
+            if (layout.frameBorderWidth > 0) {
+                ctx.strokeStyle = layout.frameBorderColor;
+                ctx.lineWidth = layout.frameBorderWidth;
+                drawRoundedRectPath(
+                    ctx,
+                    layout.frameBorderInset,
+                    layout.frameBorderInset,
+                    canvas.width - layout.frameBorderInset * 2,
+                    canvas.height - layout.frameBorderInset * 2,
+                    Math.max(0, layout.frameRadius - layout.frameBorderInset)
+                );
+                ctx.stroke();
             }
 
+            const { innerX, innerY, innerW, innerH } = layout;
             const metrics = getEditorSurfaceMetrics();
             const coverScale = Math.max(innerW / img.width, innerH / img.height);
             const drawWidth = img.width * coverScale * state.editSettings.zoom;
@@ -1412,58 +1503,42 @@ async function exportEditedPhoto() {
             const drawY = innerY + (innerH - drawHeight) / 2 + state.editSettings.offsetY * offsetScaleY;
 
             ctx.save();
-            ctx.beginPath();
-            ctx.rect(innerX, innerY, innerW, innerH);
+            drawRoundedRectPath(ctx, innerX, innerY, innerW, innerH, layout.surfaceRadius);
             ctx.clip();
             ctx.filter = `brightness(${state.editSettings.brightness}%) contrast(${state.editSettings.contrast}%)`;
             ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
             ctx.restore();
             ctx.filter = 'none';
 
-            if (state.editSettings.frame === 'brand') {
-                const footerTop = innerY + innerH + 30;
-                const chipX = canvas.width - 190;
-                const chipY = footerTop - 10;
-                const chipW = 56;
-                const chipH = 34;
-                const radius = 17;
-                const dateText = getTodayStamp();
+            if (layout.footerVisible) {
+                ctx.fillStyle = layout.footerDateColor;
+                ctx.font = layout.footerDateFont;
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'alphabetic';
+                ctx.fillText(layout.footerDateText, layout.footerDateX, layout.footerDateBaselineY);
 
-                ctx.strokeStyle = '#e5e7eb';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(36, footerTop - 18);
-                ctx.lineTo(canvas.width - 36, footerTop - 18);
-                ctx.stroke();
-
-                ctx.fillStyle = '#6b7280';
-                ctx.font = '24px sans-serif';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(dateText, 52, footerTop + 14);
-
-                ctx.fillStyle = '#111827';
-                ctx.beginPath();
-                ctx.moveTo(chipX + radius, chipY);
-                ctx.lineTo(chipX + chipW - radius, chipY);
-                ctx.quadraticCurveTo(chipX + chipW, chipY, chipX + chipW, chipY + radius);
-                ctx.lineTo(chipX + chipW, chipY + chipH - radius);
-                ctx.quadraticCurveTo(chipX + chipW, chipY + chipH, chipX + chipW - radius, chipY + chipH);
-                ctx.lineTo(chipX + radius, chipY + chipH);
-                ctx.quadraticCurveTo(chipX, chipY + chipH, chipX, chipY + chipH - radius);
-                ctx.lineTo(chipX, chipY + radius);
-                ctx.quadraticCurveTo(chipX, chipY, chipX + radius, chipY);
-                ctx.closePath();
+                ctx.fillStyle = layout.footerChipBackground;
+                drawRoundedRectPath(
+                    ctx,
+                    layout.footerChipX,
+                    layout.footerChipY,
+                    layout.footerChipW,
+                    layout.footerChipH,
+                    layout.footerChipRadius
+                );
                 ctx.fill();
 
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 18px sans-serif';
+                ctx.fillStyle = layout.footerChipColor;
+                ctx.font = layout.footerChipFont;
                 ctx.textAlign = 'center';
-                ctx.fillText('dn', chipX + chipW / 2, chipY + chipH / 2 + 1);
+                ctx.textBaseline = 'middle';
+                ctx.fillText(layout.footerChipText, layout.footerChipCenterX, layout.footerChipCenterY);
 
-                ctx.fillStyle = '#111827';
-                ctx.font = 'bold 26px sans-serif';
+                ctx.fillStyle = layout.footerBrandColor;
+                ctx.font = layout.footerBrandFont;
                 ctx.textAlign = 'left';
-                ctx.fillText('DropNow', chipX + chipW + 14, footerTop + 14);
+                ctx.textBaseline = 'alphabetic';
+                ctx.fillText(layout.footerBrandText, layout.footerBrandX, layout.footerBrandBaselineY);
             }
 
             return canvas.toDataURL('image/jpeg', 0.92);
@@ -1481,13 +1556,16 @@ async function exportEditedPhoto() {
                         url: editedPhoto,
                         source: 'edited'
                     };
-                    state.selectedPhoto = editedPhoto;
+                    setSelectedPhoto(editedPhoto);
                     state.collageEditSlot = null;
                     state.collageActiveSlot = null;
                     navigate('collage');
                     return;
                 }
-                state.selectedPhoto = await preparePrintableAsset('editor');
+                const sourcePhoto = getSelectedEditableSource();
+                state.lastPrintedSourcePhoto = sourcePhoto;
+                state.selectedPhoto = await preparePrintableAsset('editor', sourcePhoto);
+                state.selectedPhotoSource = sourcePhoto;
                 const filename = createDownloadFilename();
                 state.lastPrintedFilename = downloadPrintableDataUrl(state.selectedPhoto, filename);
                 navigate('printing');
@@ -1818,7 +1896,7 @@ function handleEditorBack() {
         function editCurrentCollageSlotPhoto() {
             const photo = getCollageSlotPhoto(state.collageActiveSlot);
             if (!photo || state.collageActiveSlot === null) return;
-            state.selectedPhoto = photo.url;
+            setSelectedPhoto(photo.url);
             state.collageEditSlot = state.collageActiveSlot;
             state.pendingCapturedPhoto = null;
             state.collageSelectionSource = null;
@@ -1941,7 +2019,7 @@ function handleEditorBack() {
 
         function editCapturedPhotoForCollage() {
             if (state.collageActiveSlot === null || !state.pendingCapturedPhoto) return;
-            state.selectedPhoto = state.pendingCapturedPhoto.url;
+            setSelectedPhoto(state.pendingCapturedPhoto.url);
             state.collageEditSlot = state.collageActiveSlot;
             state.pendingCapturedPhoto = null;
             state.collageSelectionSource = null;
@@ -2004,7 +2082,7 @@ function handleEditorBack() {
         }
 
         async function exportEditorSurfaceImage() {
-            const source = state.editSourcePhoto || state.selectedPhoto;
+            const source = getSelectedEditableSource();
             const img = await loadImage(source);
             const canvas = document.createElement('canvas');
             canvas.width = 900;
@@ -2188,8 +2266,9 @@ function handleEditorBack() {
 
             // Export collage, wrap it in a real instant-photo card, download it, then go to Print screen
             const collageDataUrl = canvas.toDataURL('image/jpeg', 0.92);
-            state.selectedPhoto = collageDataUrl;
-            state.selectedPhoto = await preparePrintableAsset('collage');
+            setSelectedPhoto(collageDataUrl);
+            state.lastPrintedSourcePhoto = collageDataUrl;
+            state.selectedPhoto = await preparePrintableAsset('collage', collageDataUrl);
             state.lastPrintedFilename = downloadPrintableDataUrl(
                 state.selectedPhoto,
                 createDownloadFilename('dropnow-collage')
@@ -2236,6 +2315,7 @@ function handleEditorBack() {
             document.getElementById('print-done').classList.add('flex');
 
             state.lastPrintedPhoto = state.selectedPhoto;
+            state.lastPrintedSourcePhoto = state.lastPrintedSourcePhoto || getSelectedEditableSource();
 
             // Pushing the final image payload (single photo or generated collage)
             state.works.unshift({
@@ -2260,7 +2340,9 @@ function handleEditorBack() {
 
         function handleCustomizePrint() {
             if (state.lastPrintedPhoto || state.selectedPhoto) {
-                state.selectedPhoto = state.lastPrintedPhoto || state.selectedPhoto;
+                const sourcePhoto = state.lastPrintedSourcePhoto || state.selectedPhotoSource || state.selectedPhoto;
+                setSelectedPhoto(sourcePhoto);
+                state.editSourcePhoto = sourcePhoto;
                 navigate('editor');
                 return;
             }
