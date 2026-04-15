@@ -1789,3 +1789,294 @@ i[data-lucide] > svg[data-lucide-icon]{
         0 12px 24px rgba(0, 0, 0, 0.24),
         inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
 }
+
+/* Dark mode second pass: tune Home, Bluetooth Connect, and Editor toward Apple Music depth */
+.dark #view-main,
+.dark #view-bt_connect,
+.dark #view-editor {
+    background:
+        radial-gradient(120% 74% at 50% -6%, rgba(92, 104, 128, 0.18), rgba(92, 104, 128, 0) 44%),
+        radial-gradient(88% 52% at 50% 108%, rgba(42, 52, 70, 0.18), rgba(42, 52, 70, 0) 54%),
+        linear-gradient(180deg, #0b0e14 0%, #11151e 48%, #0a0d13 100%) !important;
+}
+
+.dark #view-main #tab-home {
+    background:
+        radial-gradient(54% 34% at 50% 28%, rgba(122, 135, 160, 0.14), rgba(122, 135, 160, 0) 72%),
+        linear-gradient(180deg, rgba(11, 14, 20, 0.16), rgba(11, 14, 20, 0) 100%) !important;
+}
+
+.dark #view-main #bt-status-badge {
+    min-height: 2.9rem;
+    background:
+        linear-gradient(180deg, rgba(80, 89, 106, 0.58), rgba(21, 25, 34, 0.90)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    box-shadow:
+        0 18px 34px rgba(0, 0, 0, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.03) !important;
+}
+
+.dark #view-main #bt-status-badge i,
+.dark #view-main #bt-status-text {
+    color: #f2f5fb !important;
+}
+
+.hero-printer-base.is-disconnected {
+    filter: grayscale(0.58) saturate(0.76) brightness(0.92) contrast(0.97);
+}
+
+.dark #view-main #hero-printer-container {
+    opacity: 0.98 !important;
+    filter: none !important;
+    transform: scale(1) !important;
+}
+
+.dark #view-main #hero-printer-container.is-disconnected {
+    opacity: 0.72 !important;
+    transform: scale(0.95) !important;
+}
+
+.dark #view-main #hero-printer-container.is-connected {
+    opacity: 0.98 !important;
+    transform: scale(1) !important;
+}
+
+.dark #view-main #hero-printer-container::before {
+    content: "";
+    position: absolute;
+    inset: 16% 10%;
+    border-radius: 9999px;
+    background:
+        radial-gradient(circle, rgba(146, 161, 188, 0.26) 0%, rgba(146, 161, 188, 0.10) 36%, rgba(146, 161, 188, 0) 72%);
+    filter: blur(22px);
+    pointer-events: none;
+}
+
+.dark #view-main #hero-printer-img {
+    filter:
+        drop-shadow(0 26px 30px rgba(0, 0, 0, 0.34))
+        drop-shadow(0 4px 10px rgba(173, 185, 209, 0.12));
+}
+
+.dark #view-main #hero-printer-img.is-disconnected {
+    filter:
+        grayscale(0.58)
+        saturate(0.76)
+        brightness(0.92)
+        contrast(0.97)
+        drop-shadow(0 22px 24px rgba(0, 0, 0, 0.22));
+}
+
+.dark #view-main #hero-status-text {
+    color: #f5f7fc !important;
+    letter-spacing: -0.02em;
+    text-shadow: 0 0 22px rgba(162, 180, 212, 0.08);
+}
+
+.dark #view-main button[onclick="handleMainAction()"] {
+    color: #09111d !important;
+    background:
+        linear-gradient(180deg, rgba(248, 250, 255, 0.98), rgba(210, 222, 244, 0.92)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.40) !important;
+    box-shadow:
+        0 22px 44px rgba(0, 0, 0, 0.30),
+        0 10px 20px rgba(147, 168, 208, 0.10),
+        inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
+}
+
+.dark #view-main button[onclick="handleMainAction()"] i {
+    color: #0d1420 !important;
+}
+
+.dark #view-bt_connect .app-top-bar.liquid-glass,
+.dark #view-editor .app-top-bar.liquid-glass {
+    background:
+        linear-gradient(180deg, rgba(88, 97, 115, 0.68) 0%, rgba(39, 45, 56, 0.88) 44%, rgba(18, 22, 30, 0.94) 100%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow:
+        0 18px 38px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+}
+
+.dark #view-bt_connect .p-6.flex-1 {
+    background:
+        radial-gradient(64% 38% at 50% 10%, rgba(104, 120, 148, 0.16), rgba(104, 120, 148, 0) 70%),
+        linear-gradient(180deg, rgba(11, 14, 20, 0), rgba(11, 14, 20, 0.18) 100%) !important;
+}
+
+.dark #view-bt_connect #bt-scan-pulse {
+    position: relative;
+    background:
+        radial-gradient(circle at 50% 32%, rgba(150, 169, 206, 0.34), rgba(73, 89, 123, 0.22) 46%, rgba(22, 28, 40, 0.94) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.10) !important;
+    box-shadow:
+        0 24px 48px rgba(0, 0, 0, 0.34),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        0 0 0 10px rgba(102, 119, 150, 0.05) !important;
+}
+
+.dark #view-bt_connect #bt-scan-pulse::before {
+    content: "";
+    position: absolute;
+    inset: -14px;
+    border-radius: inherit;
+    border: 1px solid rgba(160, 182, 224, 0.08);
+}
+
+.dark #view-bt_connect #bt-scan-pulse i {
+    color: #f5f7fc !important;
+    filter: drop-shadow(0 0 14px rgba(176, 194, 228, 0.18));
+}
+
+.dark #view-bt_connect #bt-scan-spinner {
+    border-color: rgba(156, 176, 218, 0.54) !important;
+    border-top-color: transparent !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.dark #view-bt_connect #bt-scan-text {
+    color: #d2d9e5 !important;
+    letter-spacing: 0.01em;
+}
+
+.dark #view-bt_connect #printer-list > div {
+    border: 1px solid rgba(255, 255, 255, 0.10) !important;
+    background:
+        linear-gradient(180deg, rgba(72, 81, 98, 0.52), rgba(20, 24, 33, 0.90)) !important;
+    box-shadow:
+        0 18px 34px rgba(0, 0, 0, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+}
+
+.dark #view-bt_connect #printer-list > div span,
+.dark #view-bt_connect #printer-list > div i {
+    color: #f3f6fb !important;
+}
+
+.dark #view-bt_connect #printer-list > div button {
+    color: #08111d !important;
+    background:
+        linear-gradient(180deg, rgba(242, 246, 255, 0.96), rgba(184, 200, 230, 0.88)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.34) !important;
+    box-shadow:
+        0 14px 26px rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.82) !important;
+}
+
+.dark #view-bt_connect .mt-12.rounded-2xl {
+    background:
+        linear-gradient(180deg, rgba(29, 36, 48, 0.96), rgba(16, 20, 28, 0.98)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow:
+        0 20px 36px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark #view-bt_connect .mt-12.rounded-2xl h4 {
+    color: #dce5f6 !important;
+}
+
+.dark #view-bt_connect .mt-12.rounded-2xl p {
+    color: #aab6cb !important;
+}
+
+.dark #view-editor .flex-1.p-6 {
+    background:
+        radial-gradient(44% 28% at 50% 16%, rgba(118, 132, 160, 0.18), rgba(118, 132, 160, 0) 78%),
+        linear-gradient(180deg, rgba(10, 13, 19, 0), rgba(10, 13, 19, 0.18) 100%) !important;
+}
+
+.dark #view-editor .editor-stage-shell {
+    border-color: rgba(255, 255, 255, 0.14) !important;
+    background:
+        linear-gradient(180deg, rgba(35, 43, 57, 0.96), rgba(13, 16, 22, 0.99)) !important;
+    box-shadow:
+        0 28px 56px rgba(0, 0, 0, 0.34),
+        0 12px 24px rgba(0, 0, 0, 0.16),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark #view-editor #editor-frame {
+    box-shadow:
+        0 12px 22px rgba(0, 0, 0, 0.18),
+        0 0 0 1px rgba(255, 255, 255, 0.04) !important;
+}
+
+.dark #view-editor #editor-crop-surface {
+    background:
+        linear-gradient(180deg, rgba(24, 31, 42, 0.99), rgba(12, 16, 23, 0.99)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow:
+        0 18px 36px rgba(0, 0, 0, 0.30),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark #view-editor #editor-frame-footer {
+    color: #edf2fb !important;
+}
+
+.dark #view-editor #editor-frame-date {
+    color: #b2bed4 !important;
+}
+
+.dark #view-editor .editor-brand-chip {
+    background: rgba(9, 16, 29, 0.92) !important;
+    color: #f4f7fc !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark #view-editor .editor-liquid-panel {
+    background:
+        linear-gradient(180deg, rgba(26, 31, 42, 0.96), rgba(13, 16, 22, 0.99)) !important;
+    border-top-color: rgba(255, 255, 255, 0.08) !important;
+    box-shadow:
+        0 -18px 36px rgba(0, 0, 0, 0.26),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
+}
+
+.dark #view-editor .editor-hint-text,
+.dark #view-editor .editor-crop-meta {
+    color: #d7deea !important;
+}
+
+.dark #view-editor #editor-controls > div > button,
+.dark #view-editor #editor-controls > button {
+    background:
+        linear-gradient(180deg, rgba(78, 87, 104, 0.52), rgba(20, 24, 33, 0.88)) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.dark #view-editor #editor-controls > div > button.bg-gray-900,
+.dark #view-editor #editor-controls > div > button.dark\:bg-white,
+.dark #view-editor #editor-controls > div > button[class*="bg-gray-900 text-white"],
+.dark #view-editor #editor-controls > div > button[class*="dark:bg-white dark:text-gray-900"],
+.dark #view-editor .editor-primary-action {
+    color: #eff4fd !important;
+    text-shadow: 0 0 14px rgba(160, 182, 226, 0.12);
+}
+
+.dark #view-editor #editor-tool-dock.main-tab-dock {
+    background:
+        linear-gradient(180deg, rgba(76, 86, 104, 0.60), rgba(19, 23, 32, 0.86)) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    box-shadow:
+        0 24px 46px rgba(0, 0, 0, 0.34),
+        0 10px 22px rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+}
+
+.dark #view-editor #editor-tool-indicator.main-tab-indicator {
+    background:
+        linear-gradient(180deg, rgba(152, 164, 186, 0.42), rgba(57, 66, 82, 0.46)) !important;
+    border-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+.dark #view-editor .editor-tool-btn.main-tab-btn {
+    color: #bac4d5 !important;
+}
+
+.dark #view-editor .editor-tool-btn.main-tab-btn.is-active,
+.dark #view-editor .editor-tool-btn.main-tab-btn.is-previewed {
+    color: #f5f7fc !important;
+}

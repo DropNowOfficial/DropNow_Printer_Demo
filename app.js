@@ -404,10 +404,12 @@
                 text.innerText = state.connectedPrinter?.name || 'DropNow Air';
                 text.removeAttribute('data-i18n');
         
-                container.classList.remove('opacity-40', 'grayscale', 'scale-95');
+                container.classList.remove('scale-95', 'is-disconnected');
                 container.classList.add('scale-100');
+                container.classList.add('is-connected');
         
                 heroImg.src = 'assets/printer_connected.png';
+                heroImg.classList.remove('is-disconnected');
         
                 heroText.setAttribute('data-i18n', 'readyToPrint');
         
@@ -419,10 +421,12 @@
         
                 text.setAttribute('data-i18n', 'printerDisconnected');
         
-                container.classList.add('opacity-40', 'grayscale', 'scale-95');
+                container.classList.add('scale-95', 'is-disconnected');
                 container.classList.remove('scale-100');
+                container.classList.remove('is-connected');
         
                 heroImg.src = 'assets/printer_disconnected.png';
+                heroImg.classList.add('is-disconnected');
         
                 heroText.setAttribute('data-i18n', 'connectPrinter');
         
