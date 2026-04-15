@@ -1271,20 +1271,26 @@
             margin: 0 auto;
         }
 
-        /* Bluetooth connect page: keep the scan/logo and related cards centered as one composition */
+        /* Bluetooth connect page: center the main scan/device group, keep troubleshooting lower */
         #view-bt_connect .p-6.flex-1 {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding-top: 2.25rem;
+            min-height: 100%;
+            padding-top: 1rem;
+            padding-bottom: calc(env(safe-area-inset-bottom, 18px) + 2.5rem);
         }
-        #view-bt_connect .p-6.flex-1 > .flex.flex-col.items-center.justify-center.py-10 {
+        #view-bt_connect .bt-connect-main-group {
+            flex: 0 0 auto;
             width: 100%;
             max-width: 27rem;
-            padding-top: 1.5rem;
-            padding-bottom: 2rem;
-            margin: 0 auto;
+            margin: clamp(1.75rem, 6vh, 3.75rem) auto 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        #view-bt_connect .bt-connect-main-group > .flex.flex-col.items-center.justify-center.py-10 {
+            padding-top: 0.75rem;
+            padding-bottom: 1.75rem;
         }
         #view-bt_connect #bt-scan-text {
             text-align: center;
@@ -1294,11 +1300,14 @@
             max-width: 27rem;
             margin: 0 auto;
         }
-        #view-bt_connect .mt-12.rounded-2xl {
+        #view-bt_connect .bt-connect-help-card {
             width: 100%;
             max-width: 27rem;
             margin-left: auto;
             margin-right: auto;
+            margin-top: clamp(6.5rem, 16vh, 9rem);
+            margin-bottom: calc(env(safe-area-inset-bottom, 18px) + 1.75rem);
+            flex-shrink: 0;
         }
 
 
