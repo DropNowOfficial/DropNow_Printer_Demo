@@ -99,9 +99,13 @@
                 removePhoto: "Remove Photo",
                 editCurrentPhoto: "Edit Current Photo",
                 chooseAnotherPhoto: "Choose Another Photo",
+                flipCamera: "Flip Camera",
+                cameraSwitchUnavailable: "Camera switch is unavailable on this device.",
                 chooseAnotherTakenPhoto: "Choose Another Taken Photo"
             },
             zh: {
+                flipCamera: "\u5207\u6362\u955c\u5934",
+                cameraSwitchUnavailable: "\u5f53\u524d\u8bbe\u5907\u65e0\u6cd5\u5207\u6362\u955c\u5934\u3002",
                 welcomeTitle: "欢迎使用 DropNow",
                 welcomeSubtitle: "使用 DropNow，将回忆快速打印出来。",
                 continue: "继续",

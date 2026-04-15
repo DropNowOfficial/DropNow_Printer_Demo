@@ -246,7 +246,19 @@
         <!-- 4. Camera View -->
         <div id="view-camera" class="app-view hidden flex-col h-full bg-black relative">
             <div class="app-top-bar-camera px-4 py-4 flex items-center justify-between z-10 absolute top-0 w-full text-white">
-                <button onclick="navigate('main')" class="camera-top-hit p-2 -ml-2"><i data-lucide="x" class="w-8 h-8"></i></button>
+                <button onclick="navigate('main')" class="camera-top-hit p-2 -ml-2">
+                    <i data-lucide="x" class="w-8 h-8"></i>
+                </button>
+
+                <button
+                    id="camera-flip-btn"
+                    type="button"
+                    onclick="flipCamera()"
+                    class="camera-top-hit p-2 rounded-full bg-black/35 backdrop-blur-sm hidden"
+                    aria-label="Flip camera"
+                >
+                    <i data-lucide="refresh-cw" class="w-6 h-6"></i>
+                </button>
             </div>
             <div class="flex-1 bg-black flex items-center justify-center relative overflow-hidden" id="camera-viewport">
                 <video id="camera-video" class="w-full h-full object-cover hidden" autoplay playsinline muted></video>

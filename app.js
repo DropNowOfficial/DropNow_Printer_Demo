@@ -14,6 +14,9 @@
             selectedPhoto: null,
             editSourcePhoto: null,
             cameraStream: null,
+            cameraFacingMode: 'user',
+            cameraCanFlip: false,
+            cameraDevices: [],
             userPhotos: [],
             lastPrintedPhoto: null,
             lastPrintedFilename: null,
@@ -49,6 +52,7 @@
                 }
             });
             syncChoiceUI();
+            updateCameraFlipButton();
         }
 
         function applyTheme() {
@@ -484,28 +488,123 @@
         }
 
         // Camera
+        function updateCameraFlipButton() {
+            const flipBtn = document.getElementById('camera-flip-btn');
+            if (!flipBtn) return;
+
+            const label = translations[state.lang]?.flipCamera || translations.en.flipCamera || 'Flip Camera';
+            flipBtn.setAttribute('aria-label', label);
+            flipBtn.setAttribute('title', label);
+            flipBtn.classList.toggle('hidden', !state.cameraCanFlip);
+        }
+
+        async function detectCameraDevices() {
+            if (!navigator.mediaDevices?.enumerateDevices) {
+                state.cameraDevices = [];
+                state.cameraCanFlip = false;
+                updateCameraFlipButton();
+                return;
+            }
+
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoInputs = devices.filter(device => device.kind === 'videoinput');
+                const supportsFacingMode = Boolean(
+                    navigator.mediaDevices?.getSupportedConstraints?.().facingMode
+                );
+                state.cameraDevices = videoInputs;
+                state.cameraCanFlip = supportsFacingMode && videoInputs.length > 1;
+            } catch (error) {
+                console.error('Camera device detection failed:', error);
+                state.cameraDevices = [];
+                state.cameraCanFlip = false;
+            } finally {
+                updateCameraFlipButton();
+            }
+        }
+
+        async function flipCamera() {
+            if (!state.cameraCanFlip) {
+                alert(
+                    translations[state.lang]?.cameraSwitchUnavailable ||
+                    translations.en.cameraSwitchUnavailable ||
+                    'Camera switch is unavailable on this device.'
+                );
+                return;
+            }
+
+            state.cameraFacingMode = state.cameraFacingMode === 'environment' ? 'user' : 'environment';
+            await startCamera(true);
+        }
+
         async function startCamera(forceRetry = false) {
             const video = document.getElementById('camera-video');
             const placeholder = document.getElementById('camera-placeholder');
+
+            if (!video || !placeholder) return;
 
             if (state.cameraStream && !forceRetry) {
                 video.srcObject = state.cameraStream;
                 video.classList.remove('hidden');
                 placeholder.classList.add('hidden');
+                updateCameraFlipButton();
                 return;
             }
 
             stopCamera();
 
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({
+            const supportedConstraints = navigator.mediaDevices?.getSupportedConstraints?.() || {};
+            const supportsFacingMode = Boolean(supportedConstraints.facingMode);
+            const desiredFacingMode = state.cameraFacingMode || 'user';
+            const constraintsList = [];
+
+            if (supportsFacingMode) {
+                constraintsList.push({
                     video: {
                         width: { ideal: 1280 },
                         height: { ideal: 720 },
-                        facingMode: 'user'
+                        facingMode: { exact: desiredFacingMode }
                     },
                     audio: false
                 });
+                constraintsList.push({
+                    video: {
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        facingMode: { ideal: desiredFacingMode }
+                    },
+                    audio: false
+                });
+            }
+
+            constraintsList.push({
+                video: {
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                },
+                audio: false
+            });
+
+            try {
+                if (!navigator.mediaDevices?.getUserMedia) {
+                    throw new Error('getUserMedia is not supported in this browser.');
+                }
+
+                let stream = null;
+                let lastError = null;
+
+                for (const constraints of constraintsList) {
+                    try {
+                        stream = await navigator.mediaDevices.getUserMedia(constraints);
+                        break;
+                    } catch (error) {
+                        lastError = error;
+                    }
+                }
+
+                if (!stream) {
+                    throw lastError || new Error('Unable to acquire camera stream.');
+                }
 
                 state.cameraStream = stream;
                 video.srcObject = stream;
@@ -513,14 +612,21 @@
 
                 video.classList.remove('hidden');
                 placeholder.classList.add('hidden');
+                await detectCameraDevices();
             } catch (error) {
                 console.error('Camera access failed:', error);
                 video.classList.add('hidden');
                 placeholder.classList.remove('hidden');
                 const hint = placeholder.querySelector('[data-i18n="cameraPermissionHint"]');
-                if (hint && translations[state.lang]?.cameraPermissionError) {
-                    hint.innerText = translations[state.lang].cameraPermissionError;
+                const permissionErrorText =
+                    translations[state.lang]?.cameraPermissionError ||
+                    translations.en.cameraPermissionError;
+                if (hint && permissionErrorText) {
+                    hint.innerText = permissionErrorText;
                 }
+                state.cameraDevices = [];
+                state.cameraCanFlip = false;
+                updateCameraFlipButton();
             }
         }
 
@@ -541,6 +647,9 @@
                 const hint = placeholder.querySelector('[data-i18n="cameraPermissionHint"]');
                 if (hint) applyLanguage();
             }
+            state.cameraDevices = [];
+            state.cameraCanFlip = false;
+            updateCameraFlipButton();
         }
 
         function capturePhoto() {
