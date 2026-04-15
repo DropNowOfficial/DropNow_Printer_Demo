@@ -16,6 +16,7 @@
             editSourcePhoto: null,
             editorReturnView: 'review',
             editorReturnTab: null,
+            editorFramePreference: 'classic',
             cameraStream: null,
             cameraFacingMode: 'environment',
             cameraCanFlip: false,
@@ -44,6 +45,7 @@
             editorDrag: { active: false, pointerId: null, startX: 0, startY: 0, originX: 0, originY: 0 },
             mainDockDrag: { active: false, pointerId: null, previewTab: null, suppressClickUntil: 0 },
             editorDockDrag: { active: false, pointerId: null, previewTool: null, suppressClickUntil: 0 },
+            printPreviewMode: 'polaroid',
             printInterval: null
         };
 
@@ -1048,7 +1050,14 @@
 
         function initEditor() {
             state.editSourcePhoto = getSelectedEditableSource();
-            state.editSettings = { brightness: 100, contrast: 100, frame: 'classic', zoom: 1, offsetX: 0, offsetY: 0 };
+            state.editSettings = {
+                brightness: 100,
+                contrast: 100,
+                frame: state.editorFramePreference || 'classic',
+                zoom: 1,
+                offsetX: 0,
+                offsetY: 0
+            };
             state.editorActiveTool = 'crop';
             state.editorImageMeta = { naturalWidth: 0, naturalHeight: 0 };
             state.editorDrag = { active: false, pointerId: null, startX: 0, startY: 0, originX: 0, originY: 0 };
@@ -1142,8 +1151,34 @@ function setEditorTool(tool) {
 
         function updateEditSetting(key, value) {
             state.editSettings[key] = key === 'frame' ? value : Number(value);
+            if (key === 'frame') {
+                state.editorFramePreference = state.editSettings.frame;
+            }
             applyEditorFilters();
             if (key === 'frame') setEditorTool('frame');
+        }
+
+        function configurePrintingPreview() {
+            const card = document.getElementById('printing-card');
+            const media = document.getElementById('printing-media');
+            const image = document.getElementById('printing-img');
+            const spacer = document.getElementById('printing-footer-spacer');
+            if (!card || !media || !image || !spacer) return;
+
+            const framedPreview = state.printPreviewMode === 'editor-framed';
+
+            if (framedPreview) {
+                card.className = 'w-full h-full bg-transparent border-0 shadow-2xl p-0 flex flex-col transform-gpu animate-print-slide';
+                media.className = 'flex-1 bg-transparent overflow-hidden relative flex items-center justify-center';
+                image.className = 'w-full h-full object-contain';
+                spacer.className = 'hidden';
+                return;
+            }
+
+            card.className = 'w-full h-full bg-white border border-gray-200 shadow-2xl p-3 flex flex-col transform-gpu animate-print-slide';
+            media.className = 'flex-1 bg-gray-100 overflow-hidden relative';
+            image.className = 'w-full h-full object-cover';
+            spacer.className = 'h-10';
         }
 
         function updateCropZoom(value) {
@@ -1230,12 +1265,12 @@ function setEditorTool(tool) {
             const classes = {
                 classic: 'transition-all duration-300 w-full flex flex-col gap-3 p-4 bg-white shadow-md rounded-sm border border-gray-200 dark:border-gray-700 dark:bg-gray-100',
                 brand: 'transition-all duration-300 w-full flex flex-col gap-3 p-4 bg-white shadow-md rounded-sm border border-gray-200 dark:border-gray-700 dark:bg-white',
-                thin: 'transition-all duration-300 w-full flex flex-col gap-3 p-4 bg-white shadow-sm rounded-sm border border-gray-300 dark:border-gray-600 dark:bg-white'
+                thin: 'transition-all duration-300 w-full flex flex-col gap-2 p-2 bg-white shadow-sm rounded-[2px] border border-gray-300 dark:border-gray-600 dark:bg-white'
             };
             frame.className = classes[state.editSettings.frame] || classes.classic;
-            surface.classList.remove('rounded-sm', 'rounded-lg', 'shadow-md', 'shadow-lg', 'border', 'border-gray-200', 'border-gray-300', 'dark:border-gray-600', 'dark:border-gray-700');
+            surface.classList.remove('rounded-sm', 'rounded-lg', 'shadow-sm', 'shadow-md', 'shadow-lg', 'border', 'border-gray-200', 'border-gray-300', 'dark:border-gray-600', 'dark:border-gray-700');
             if (state.editSettings.frame === 'thin') {
-                surface.classList.add('rounded-sm', 'shadow-md', 'border', 'border-gray-300', 'dark:border-gray-600');
+                surface.classList.add('rounded-sm', 'shadow-sm', 'border', 'border-gray-300', 'dark:border-gray-600');
             } else {
                 surface.classList.add('rounded-lg', 'shadow-lg', 'border', 'border-gray-200', 'dark:border-gray-700');
             }
@@ -1482,6 +1517,7 @@ function setEditorTool(tool) {
             try {
                 const sourcePhoto = getSelectedEditableSource();
                 state.lastPrintedSourcePhoto = sourcePhoto;
+                state.printPreviewMode = 'polaroid';
                 state.selectedPhoto = await preparePrintableAsset('direct', sourcePhoto);
                 state.selectedPhotoSource = sourcePhoto;
                 const filename = createDownloadFilename();
@@ -1590,6 +1626,7 @@ async function exportEditedPhoto() {
                 }
                 const sourcePhoto = getSelectedEditableSource();
                 state.lastPrintedSourcePhoto = sourcePhoto;
+                state.printPreviewMode = 'editor-framed';
                 state.selectedPhoto = await preparePrintableAsset('editor', sourcePhoto);
                 state.selectedPhotoSource = sourcePhoto;
                 const filename = createDownloadFilename();
@@ -2310,6 +2347,7 @@ function handleEditorBack() {
             const collageDataUrl = canvas.toDataURL('image/jpeg', 0.92);
             setSelectedPhoto(collageDataUrl);
             state.lastPrintedSourcePhoto = collageDataUrl;
+            state.printPreviewMode = 'polaroid';
             state.selectedPhoto = await preparePrintableAsset('collage', collageDataUrl);
             state.lastPrintedFilename = downloadPrintableDataUrl(
                 state.selectedPhoto,
@@ -2329,6 +2367,7 @@ function handleEditorBack() {
             document.getElementById('print-done').classList.remove('flex');
             
             // This is now properly populated by Editor OR Canvas Collage Generation
+            configurePrintingPreview();
             document.getElementById('printing-img').src = state.selectedPhoto;
             
             let progress = 0;

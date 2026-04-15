@@ -490,12 +490,12 @@
         <div id="view-printing" class="app-view hidden flex-col h-full bg-white dark:bg-gray-950 items-center justify-center p-6 relative">
             <div id="print-active" class="flex-1 w-full flex flex-col items-center justify-center animate-fade-in">
                 <div class="relative w-48 h-64 mb-10" style="perspective: 1000px;">
-                    <div class="w-full h-full bg-white border border-gray-200 shadow-2xl p-3 flex flex-col transform-gpu animate-print-slide">
-                        <div class="flex-1 bg-gray-100 overflow-hidden relative">
+                    <div id="printing-card" class="w-full h-full bg-white border border-gray-200 shadow-2xl p-3 flex flex-col transform-gpu animate-print-slide">
+                        <div id="printing-media" class="flex-1 bg-gray-100 overflow-hidden relative">
                             <img id="printing-img" src="" class="w-full h-full object-cover" alt="printing" />
                             <div class="absolute top-0 left-0 w-full h-1 bg-green-400/50 shadow-[0_0_8px_rgba(74,222,128,0.8)] animate-scan-line"></div>
                         </div>
-                        <div class="h-10"></div>
+                        <div id="printing-footer-spacer" class="h-10"></div>
                     </div>
                 </div>
                 <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6" data-i18n="printing"></h2>

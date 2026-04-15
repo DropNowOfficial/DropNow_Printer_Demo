@@ -1251,6 +1251,56 @@
             margin-bottom: 0.9rem !important;
         }
 
+        /* Library empty state: center icon and copy in the remaining content area */
+        #view-library #library-empty-state {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding-top: 0 !important;
+            padding-bottom: calc(env(safe-area-inset-bottom, 18px) + 3rem) !important;
+        }
+        #view-library #library-empty-state i {
+            margin-bottom: 0.95rem !important;
+        }
+        #view-library #library-empty-state p {
+            max-width: 19rem;
+            margin: 0 auto;
+        }
+
+        /* Bluetooth connect page: keep the scan/logo and related cards centered as one composition */
+        #view-bt_connect .p-6.flex-1 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 2.25rem;
+        }
+        #view-bt_connect .p-6.flex-1 > .flex.flex-col.items-center.justify-center.py-10 {
+            width: 100%;
+            max-width: 27rem;
+            padding-top: 1.5rem;
+            padding-bottom: 2rem;
+            margin: 0 auto;
+        }
+        #view-bt_connect #bt-scan-text {
+            text-align: center;
+        }
+        #view-bt_connect #printer-list {
+            width: 100%;
+            max-width: 27rem;
+            margin: 0 auto;
+        }
+        #view-bt_connect .mt-12.rounded-2xl {
+            width: 100%;
+            max-width: 27rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
 
 /* Offline icon fix: preserve i[data-lucide] wrappers and size nested SVGs correctly */
 i[data-lucide]{
