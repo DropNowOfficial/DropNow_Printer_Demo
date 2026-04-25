@@ -1250,6 +1250,9 @@
         #tab-works #works-empty i {
             margin-bottom: 0.9rem !important;
         }
+        #tab-works #works-empty.hidden {
+            display: none !important;
+        }
 
         /* Library empty state: center icon and copy in the remaining content area */
         #view-library #library-empty-state {
@@ -1269,6 +1272,9 @@
         #view-library #library-empty-state p {
             max-width: 19rem;
             margin: 0 auto;
+        }
+        #view-library #library-empty-state.hidden {
+            display: none !important;
         }
 
         /* Bluetooth connect page: center the main scan/device group, keep troubleshooting lower */
